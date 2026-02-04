@@ -1,0 +1,6 @@
+# Cloudflare Workers Local Development Secrets
+# Put your Google Service Account credentials here for local development
+# DO NOT commit this file to version control!
+
+GOOGLE_SERVICE_ACCOUNT_EMAIL=your-service-account@your-project.iam.gserviceaccount.com
+GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nYOUR_PRIVATE_KEY_HERE\n-----END PRIVATE KEY-----\n"

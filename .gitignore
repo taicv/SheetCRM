@@ -1,0 +1,6 @@
+.agent/
+node_modules/
+.pnpm-store/
+.wrangler/
+.dev.vars
+frontend/test-results/

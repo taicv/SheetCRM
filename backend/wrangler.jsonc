@@ -1,0 +1,8 @@
+{
+    "name": "sheetcrm",
+    "compatibility_date": "2024-06-14",
+    "main": "src/index.ts",
+    "vars": {
+        "SPREADSHEET_ID": "1qqciTWousoyZf1ZlIo7HWAQM2i81sJRWdF5nuZr8KN0"
+    }
+}
