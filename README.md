@@ -55,13 +55,7 @@ GOOGLE_CLIENT_SECRET=your-client-secret
 COOKIE_SECRET=any-random-string-at-least-32-characters-long
 ```
 
-### 4. Setup Google Sheet
-
-1. Open your [Google Spreadsheet](https://docs.google.com/spreadsheets/d/1qqciTWousoyZf1ZlIo7HWAQM2i81sJRWdF5nuZr8KN0)
-2. Create 4 tabs: `contacts`, `companies`, `notes`, `reminders`
-3. Make sure your Google account has edit access to the spreadsheet
-
-### 5. Run Development Servers
+### 4. Run Development Servers
 
 **Terminal 1 - Backend:**
 ```bash
@@ -76,15 +70,6 @@ cd frontend
 pnpm dev
 # App runs at http://localhost:5173
 ```
-
-### 6. Initialize Google Sheets Headers
-
-After login, call the init API once:
-```bash
-curl -X POST http://localhost:8787/api/v1/init --cookie "your-session-cookie"
-```
-
-Or simply use the app — headers are checked automatically.
 
 ## 🔧 Tech Stack
 
@@ -102,16 +87,18 @@ Or simply use the app — headers are checked automatically.
 - ✅ Reminders with due dates
 - ✅ Dashboard with stats
 - ✅ Google Sheets sync (web app + direct Sheets editing)
+- ✅ Per-user spreadsheet (auto-created on first login)
 
 ## 🔐 Authentication Flow
 
 1. User clicks "Sign in with Google"
 2. Redirected to Google OAuth consent screen
-3. User grants Sheets access permission
+3. User grants Sheets + Drive access permission
 4. Backend exchanges auth code for tokens
-5. Session stored in encrypted HttpOnly cookie
-6. All API calls authenticated via cookie
-7. Tokens auto-refresh when expired
+5. Backend finds or creates "SheetCRM Data" spreadsheet in user's Drive
+6. Session (tokens + spreadsheetId) stored in encrypted HttpOnly cookie
+7. All API calls authenticated via cookie
+8. Tokens auto-refresh when expired
 
 ## 🚢 Deployment
 

@@ -1,4 +1,5 @@
 import { NavLink } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 const navItems = [
     { to: '/', label: 'Dashboard', icon: '📊' },
@@ -8,6 +9,8 @@ const navItems = [
 ];
 
 export function Sidebar() {
+    const { user } = useAuth();
+
     return (
         <aside className="w-64 bg-white border-r border-gray-200 min-h-screen flex flex-col">
             {/* Logo */}
@@ -42,17 +45,19 @@ export function Sidebar() {
             </nav>
 
             {/* Footer */}
-            <div className="p-4 border-t border-gray-200">
-                <a
-                    href="https://docs.google.com/spreadsheets/d/1qqciTWousoyZf1ZlIo7HWAQM2i81sJRWdF5nuZr8KN0"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-4 py-2 text-sm text-gray-600 hover:text-primary-600 transition-colors"
-                >
-                    <span>📄</span>
-                    <span>Open Google Sheet</span>
-                </a>
-            </div>
+            {user?.spreadsheetId && (
+                <div className="p-4 border-t border-gray-200">
+                    <a
+                        href={`https://docs.google.com/spreadsheets/d/${user.spreadsheetId}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-gray-600 hover:text-primary-600 transition-colors"
+                    >
+                        <span>📄</span>
+                        <span>Open Google Sheet</span>
+                    </a>
+                </div>
+            )}
         </aside>
     );
 }

@@ -4,6 +4,7 @@ interface User {
     email: string;
     name: string;
     picture: string;
+    spreadsheetId: string;
 }
 
 interface AuthContextType {

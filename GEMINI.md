@@ -32,11 +32,12 @@
   - Dashboard stats
   - Google Sheets dual-mode (web app + direct Sheets editing)
   - **Google OAuth 2.0 user authentication** (Sign in with Google)
+  - **Per-user spreadsheet** (auto-created on first login)
 - **Infrastructure**: Cloudflare Pages (static hosting) + Cloudflare Workers (API)
 - **Auth**: OAuth 2.0 (user signs in with Google, grants Sheets access)
 
 ### Current Phase
-- **Status**: Phase 6 (Fine-tune & Loop) — OAuth 2.0 migration complete, awaiting TEST_PLAN review
+- **Status**: Phase 6 (Fine-tune & Loop) — Per-user spreadsheet complete, awaiting TEST_PLAN review
 - **Next**: Manual testing with real Google OAuth credentials
 
 ### Auth Architecture (OAuth 2.0)
@@ -59,7 +60,7 @@
 - Use `pnpm` instead of npm (user preference)
 
 ### Google Sheet Database
-- **Spreadsheet ID**: `1qqciTWousoyZf1ZlIo7HWAQM2i81sJRWdF5nuZr8KN0`
+- **Spreadsheet Name**: `SheetCRM Data` (auto-created per user in their Google Drive)
 - **Sheets**: contacts, companies, notes, reminders
 
 ### Environment Variables (backend/.dev.vars)

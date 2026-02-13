@@ -11,11 +11,9 @@
 ## Phase 2: Core Infrastructure
 
 ### Backend (Cloudflare Workers)
-- [x] ~~Setup Google Sheets API authentication (Service Account JWT signing)~~ → Replaced with OAuth 2.0
 - [x] Setup Google OAuth 2.0 authentication (user sign-in, token exchange, encrypted cookies)
 - [x] Create Google Sheets service module
 - [x] Implement CORS and request handling middleware
-- [x] ~~Setup environment secrets (service account credentials)~~ → Replaced with OAuth client secrets
 - [x] Setup environment secrets (OAuth Client ID, Client Secret, Cookie Secret)
 
 ### Frontend
@@ -71,6 +69,15 @@
 - [x] Header user profile + logout dropdown
 - [x] API client with credentials + 401 redirect
 
+### F8: Per-User Spreadsheet Auto-Creation
+- [x] Add `drive.file` scope for Drive search
+- [x] Add `findOrCreateSpreadsheet()` to auth module
+- [x] Auto-create "SheetCRM Data" spreadsheet with 4 tabs + headers on first login
+- [x] Reuse existing spreadsheet on re-login (Drive search by name)
+- [x] Store `spreadsheetId` in encrypted session cookie
+- [x] Remove hardcoded `SPREADSHEET_ID` from `wrangler.jsonc`
+- [x] Dynamic "Open Google Sheet" link in sidebar
+
 ## Phase 4: UI/UX Polish
 - [x] Apply Tailwind styling per design guidelines
 - [x] Responsive design (mobile-first)
@@ -101,5 +108,6 @@ All phases complete including OAuth 2.0 migration. Awaiting manual testing with 
 | 2026-02-04 | Phase 3  | Complete    | All features implemented      |
 | 2026-02-04 | Phase 4  | Complete    | TEST_PLAN.md created          |
 | 2026-02-04 | Phase 5  | Complete    | Tests executed, 6/7 passed    |
-| 2026-02-04 | Phase 6  | In Progress | Service Account auth working  |
+| 2026-02-04 | Phase 6  | In Progress | Initial implementation done    |
 | 2026-02-13 | Phase 6  | Complete    | OAuth 2.0 migration done      |
+| 2026-02-13 | Phase 6  | Complete    | Per-user spreadsheet creation  |

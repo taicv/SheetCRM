@@ -1,5 +1,5 @@
 // Google Sheets API client for Cloudflare Workers
-// Uses user's OAuth access token (not service account)
+// Uses authenticated user's OAuth access token
 
 interface SheetRow {
     [key: string]: string;

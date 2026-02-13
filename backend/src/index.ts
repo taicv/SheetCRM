@@ -7,6 +7,7 @@ import {
     exchangeCodeForTokens,
     refreshAccessToken,
     getUserInfo,
+    findOrCreateSpreadsheet,
     encryptSession,
     decryptSession,
     parseCookie,
@@ -18,20 +19,11 @@ import {
 } from './auth';
 
 interface Env {
-    SPREADSHEET_ID: string;
     GOOGLE_CLIENT_ID: string;
     GOOGLE_CLIENT_SECRET: string;
     COOKIE_SECRET: string;
     FRONTEND_URL?: string; // Optional: for production redirect
 }
-
-// Sheet schemas for initialization
-const SHEET_SCHEMAS = {
-    contacts: ['id', 'name', 'email', 'phone', 'company_id', 'source', 'notes', 'created_at', 'updated_at'],
-    companies: ['id', 'name', 'industry', 'website', 'address', 'notes', 'created_at', 'updated_at'],
-    notes: ['id', 'contact_id', 'content', 'created_at'],
-    reminders: ['id', 'contact_id', 'title', 'due_date', 'is_done', 'created_at'],
-};
 
 // CORS headers
 const corsHeaders = {
@@ -105,9 +97,9 @@ async function getSession(request: Request, env: Env): Promise<AuthSession | nul
 }
 
 // Create sheets client from user session
-function createClient(env: Env, session: AuthSession): GoogleSheetsClient {
+function createClient(session: AuthSession): GoogleSheetsClient {
     return new GoogleSheetsClient({
-        spreadsheetId: env.SPREADSHEET_ID,
+        spreadsheetId: session.spreadsheetId,
         accessToken: session.accessToken,
     });
 }
@@ -222,6 +214,9 @@ router.add('GET', '/api/v1/auth/callback', async (request, _, __, env) => {
         // Get user info
         const userInfo = await getUserInfo(tokens.access_token);
 
+        // Find or create the user's spreadsheet
+        const spreadsheetId = await findOrCreateSpreadsheet(tokens.access_token);
+
         // Build session
         const session: AuthSession = {
             accessToken: tokens.access_token,
@@ -230,6 +225,7 @@ router.add('GET', '/api/v1/auth/callback', async (request, _, __, env) => {
             email: userInfo.email,
             name: userInfo.name,
             picture: userInfo.picture,
+            spreadsheetId,
         };
 
         // Encrypt session into cookie
@@ -270,6 +266,7 @@ router.add('GET', '/api/v1/auth/status', async (request, _, __, env) => {
             email: session.email,
             name: session.name,
             picture: session.picture,
+            spreadsheetId: session.spreadsheetId,
         },
     }, 200, headers);
 }, false);
@@ -434,13 +431,10 @@ router.add('DELETE', '/api/v1/reminders/:id', async (_, params, client) => {
     return jsonResponse({ success: true });
 });
 
-// Initialize sheets endpoint (call once to set up headers)
-router.add('POST', '/api/v1/init', async (_, __, client) => {
-    for (const [sheetName, headers] of Object.entries(SHEET_SCHEMAS)) {
-        await client!.initializeSheet(sheetName, headers);
-    }
-    return jsonResponse({ success: true, message: 'Sheets initialized' });
-});
+// Health check
+router.add('GET', '/api/v1/health', async () => {
+    return jsonResponse({ status: 'ok' });
+}, false);
 
 // ==================== MAIN FETCH HANDLER ====================
 
@@ -470,7 +464,7 @@ export default {
                 if (!session) {
                     return errorResponse('Unauthorized. Please sign in.', 401);
                 }
-                client = createClient(env, session);
+                client = createClient(session);
             }
 
             const response = await match.handler(request, match.params, client, env, session);

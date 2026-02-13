@@ -1,16 +1,27 @@
 // Google OAuth 2.0 Authentication for SheetCRM
-// Replaces Service Account auth with user-based OAuth flow
+// Handles user sign-in, token exchange, session cookies
 
 const GOOGLE_AUTH_URL = 'https://accounts.google.com/o/oauth2/v2/auth';
 const GOOGLE_TOKEN_URL = 'https://oauth2.googleapis.com/token';
 const GOOGLE_USERINFO_URL = 'https://www.googleapis.com/oauth2/v2/userinfo';
 
-// Scopes needed: Sheets read/write + user email
+// Scopes needed: Sheets read/write + Drive file access + user email
 const SCOPES = [
     'https://www.googleapis.com/auth/spreadsheets',
+    'https://www.googleapis.com/auth/drive.file',
     'https://www.googleapis.com/auth/userinfo.email',
     'https://www.googleapis.com/auth/userinfo.profile',
 ];
+
+const SPREADSHEET_NAME = 'SheetCRM Data';
+
+// Sheet schemas for auto-initialization
+const SHEET_SCHEMAS: Record<string, string[]> = {
+    contacts: ['id', 'name', 'email', 'phone', 'company_id', 'source', 'notes', 'created_at', 'updated_at'],
+    companies: ['id', 'name', 'industry', 'website', 'address', 'notes', 'created_at', 'updated_at'],
+    notes: ['id', 'contact_id', 'content', 'created_at'],
+    reminders: ['id', 'contact_id', 'title', 'due_date', 'is_done', 'created_at'],
+};
 
 interface OAuthTokens {
     access_token: string;
@@ -33,6 +44,7 @@ interface AuthSession {
     email: string;
     name: string;
     picture: string;
+    spreadsheetId: string;
 }
 
 // Build Google OAuth consent URL
@@ -201,11 +213,82 @@ function buildDeleteCookie(name: string): string {
 const SESSION_COOKIE_NAME = 'sheetcrm_session';
 const SESSION_MAX_AGE = 30 * 24 * 60 * 60; // 30 days
 
+// Find existing "SheetCRM Data" spreadsheet in user's Drive, or create a new one
+async function findOrCreateSpreadsheet(accessToken: string): Promise<string> {
+    // Search Drive for existing spreadsheet
+    const searchParams = new URLSearchParams({
+        q: `name='${SPREADSHEET_NAME}' and mimeType='application/vnd.google-apps.spreadsheet' and trashed=false`,
+        fields: 'files(id,name)',
+        spaces: 'drive',
+    });
+
+    const searchResponse = await fetch(
+        `https://www.googleapis.com/drive/v3/files?${searchParams.toString()}`,
+        { headers: { Authorization: `Bearer ${accessToken}` } }
+    );
+
+    if (searchResponse.ok) {
+        const searchData: { files?: Array<{ id: string; name: string }> } = await searchResponse.json();
+        if (searchData.files && searchData.files.length > 0) {
+            // Found existing spreadsheet
+            return searchData.files[0].id;
+        }
+    }
+
+    // Not found — create new spreadsheet with 4 tabs
+    const sheetNames = Object.keys(SHEET_SCHEMAS);
+    const createResponse = await fetch('https://sheets.googleapis.com/v4/spreadsheets', {
+        method: 'POST',
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            properties: { title: SPREADSHEET_NAME },
+            sheets: sheetNames.map((name, index) => ({
+                properties: { sheetId: index, title: name },
+            })),
+        }),
+    });
+
+    if (!createResponse.ok) {
+        const error = await createResponse.text();
+        throw new Error(`Failed to create spreadsheet: ${error}`);
+    }
+
+    const created: { spreadsheetId: string } = await createResponse.json();
+    const spreadsheetId = created.spreadsheetId;
+
+    // Initialize headers for each sheet
+    const batchData = Object.entries(SHEET_SCHEMAS).map(([sheet, headers]) => ({
+        range: `${sheet}!A1`,
+        values: [headers],
+    }));
+
+    await fetch(
+        `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values:batchUpdate`,
+        {
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                valueInputOption: 'RAW',
+                data: batchData,
+            }),
+        }
+    );
+
+    return spreadsheetId;
+}
+
 export {
     getAuthorizationUrl,
     exchangeCodeForTokens,
     refreshAccessToken,
     getUserInfo,
+    findOrCreateSpreadsheet,
     encryptSession,
     decryptSession,
     parseCookie,

@@ -453,7 +453,7 @@ Border:     #E5E7EB (Gray-200) - Borders
 
 ## 11. Google Sheets Database
 
-**Spreadsheet ID**: `1qqciTWousoyZf1ZlIo7HWAQM2i81sJRWdF5nuZr8KN0`
+**Spreadsheet Name**: `SheetCRM Data` (auto-created per user in their Google Drive)
 
 ### Limitations to Consider
 - **Cell limit**: 10 million cells max
@@ -472,11 +472,13 @@ Border:     #E5E7EB (Gray-200) - Borders
 
 ### Authentication Flow (OAuth 2.0)
 1. User clicks "Sign in with Google" → redirected to Google consent screen
-2. User grants permission to access Google Sheets
+2. User grants permission to access Google Sheets + Drive (app files only)
 3. Backend exchanges auth code for access + refresh tokens
-4. Session stored in AES-GCM encrypted HttpOnly cookie (stateless)
-5. Access tokens auto-refresh when expired
-6. All data endpoints return 401 if not authenticated
+4. Backend searches Drive for existing "SheetCRM Data" spreadsheet
+5. If not found, creates new spreadsheet with 4 tabs + headers
+6. Session (tokens + spreadsheetId) stored in AES-GCM encrypted HttpOnly cookie
+7. Access tokens auto-refresh when expired
+8. All data endpoints return 401 if not authenticated
 
 ### Data Protection
 - No user credentials stored on server
@@ -497,7 +499,7 @@ Border:     #E5E7EB (Gray-200) - Borders
 
 | Source | Key Insight |
 |--------|-------------|
-| Google Sheets API Docs | Service account JWT auth, batch updates |
+| Google Sheets API Docs | OAuth 2.0 user auth, batch updates |
 | Cloudflare Workers Docs | TypeScript support, secrets management |
 | CRM Best Practices | Contact/Company/Notes data model |
 | MiniCRM.io | Feature set for small business |
