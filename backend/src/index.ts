@@ -25,20 +25,32 @@ interface Env {
     FRONTEND_URL?: string; // Optional: for production redirect
 }
 
-// CORS headers
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Allow-Credentials': 'true',
-};
+// Dynamic CORS headers — whitelist allowed origins
+function getCorsHeaders(request: Request, env: Env): Record<string, string> {
+    const origin = request.headers.get('Origin');
+    const allowedOrigins = [
+        env.FRONTEND_URL || '',
+        'http://localhost:5173',
+        'http://localhost:8787',
+    ].filter(Boolean);
+
+    const allowedOrigin = origin && allowedOrigins.includes(origin)
+        ? origin
+        : allowedOrigins[0] || 'http://localhost:5173';
+
+    return {
+        'Access-Control-Allow-Origin': allowedOrigin,
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Credentials': 'true',
+    };
+}
 
 function jsonResponse(data: unknown, status = 200, extraHeaders?: Record<string, string>): Response {
     return new Response(JSON.stringify(data), {
         status,
         headers: {
             'Content-Type': 'application/json',
-            ...corsHeaders,
             ...extraHeaders,
         },
     });
@@ -46,6 +58,64 @@ function jsonResponse(data: unknown, status = 200, extraHeaders?: Record<string,
 
 function errorResponse(message: string, status = 500): Response {
     return jsonResponse({ error: message, success: false }, status);
+}
+
+// ==================== INPUT VALIDATION ====================
+
+const MAX_FIELD_LENGTH = 500;
+
+// Allowed fields per entity type (whitelist)
+const ALLOWED_FIELDS: Record<string, string[]> = {
+    contacts: ['name', 'email', 'phone', 'company_id', 'title', 'status', 'notes'],
+    companies: ['name', 'website', 'industry', 'address', 'notes'],
+    reminders: ['title', 'description', 'due_date', 'contact_id', 'is_done'],
+    notes: ['content', 'type', 'contact_id', 'created_at'],
+};
+
+function sanitizeInput(data: Record<string, unknown>, entityType: string): Record<string, string> {
+    const allowed = ALLOWED_FIELDS[entityType] || [];
+    const cleaned: Record<string, string> = {};
+    for (const key of allowed) {
+        if (key in data && data[key] !== undefined && data[key] !== null) {
+            const val = String(data[key]);
+            cleaned[key] = val.length > MAX_FIELD_LENGTH ? val.slice(0, MAX_FIELD_LENGTH) : val;
+        }
+    }
+    return cleaned;
+}
+
+function validateContact(data: Record<string, unknown>): string | null {
+    if (!data.name || typeof data.name !== 'string' || data.name.trim().length === 0) {
+        return 'Contact name is required';
+    }
+    if (data.email && typeof data.email === 'string' && !data.email.includes('@')) {
+        return 'Invalid email format';
+    }
+    return null;
+}
+
+function validateCompany(data: Record<string, unknown>): string | null {
+    if (!data.name || typeof data.name !== 'string' || data.name.trim().length === 0) {
+        return 'Company name is required';
+    }
+    return null;
+}
+
+function validateReminder(data: Record<string, unknown>): string | null {
+    if (!data.title || typeof data.title !== 'string' || data.title.trim().length === 0) {
+        return 'Reminder title is required';
+    }
+    if (!data.due_date) {
+        return 'Due date is required';
+    }
+    return null;
+}
+
+function validateNote(data: Record<string, unknown>): string | null {
+    if (!data.content || typeof data.content !== 'string' || data.content.trim().length === 0) {
+        return 'Note content is required';
+    }
+    return null;
 }
 
 // Get the redirect URI for OAuth callbacks
@@ -170,13 +240,14 @@ const router = new Router();
 // Login - redirect to Google OAuth consent screen
 router.add('GET', '/api/v1/auth/login', async (request, _, __, env) => {
     const redirectUri = getRedirectUri(request);
-    const authUrl = getAuthorizationUrl(env.GOOGLE_CLIENT_ID, redirectUri);
+    const state = crypto.randomUUID();
+    const authUrl = getAuthorizationUrl(env.GOOGLE_CLIENT_ID, redirectUri, state);
 
     return new Response(null, {
         status: 302,
         headers: {
             Location: authUrl,
-            ...corsHeaders,
+            'Set-Cookie': `oauth_state=${state}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=600`,
         },
     });
 }, false);
@@ -193,13 +264,19 @@ router.add('GET', '/api/v1/auth/callback', async (request, _, __, env) => {
             status: 302,
             headers: {
                 Location: `${frontendUrl}/login?error=${encodeURIComponent(error)}`,
-                ...corsHeaders,
             },
         });
     }
 
     if (!code) {
         return errorResponse('Missing authorization code', 400);
+    }
+
+    // Validate OAuth state parameter to prevent CSRF
+    const state = url.searchParams.get('state');
+    const cookieState = parseCookie(request.headers.get('Cookie'), 'oauth_state');
+    if (!state || state !== cookieState) {
+        return errorResponse('Invalid state parameter. Please try signing in again.', 403);
     }
 
     try {
@@ -232,14 +309,13 @@ router.add('GET', '/api/v1/auth/callback', async (request, _, __, env) => {
         const encryptedSession = await encryptSession(session, env.COOKIE_SECRET);
         const frontendUrl = getFrontendUrl(request, env);
 
-        return new Response(null, {
-            status: 302,
-            headers: {
-                Location: frontendUrl,
-                'Set-Cookie': buildSetCookie(SESSION_COOKIE_NAME, encryptedSession, SESSION_MAX_AGE),
-                ...corsHeaders,
-            },
-        });
+        // Set session cookie + clear the oauth_state cookie
+        const headers = new Headers();
+        headers.set('Location', frontendUrl);
+        headers.append('Set-Cookie', buildSetCookie(SESSION_COOKIE_NAME, encryptedSession, SESSION_MAX_AGE));
+        headers.append('Set-Cookie', 'oauth_state=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0');
+
+        return new Response(null, { status: 302, headers });
     } catch (err) {
         console.error('OAuth callback error:', err);
         const message = err instanceof Error ? err.message : 'Authentication failed';
@@ -278,7 +354,6 @@ router.add('POST', '/api/v1/auth/logout', async () => {
         headers: {
             'Content-Type': 'application/json',
             'Set-Cookie': buildDeleteCookie(SESSION_COOKIE_NAME),
-            ...corsHeaders,
         },
     });
 }, false);
@@ -314,13 +389,17 @@ router.add('GET', '/api/v1/contacts/:id', async (_, params, client) => {
 });
 
 router.add('POST', '/api/v1/contacts', async (request, _, client) => {
-    const data = await request.json() as SheetRow;
+    const raw = await request.json() as Record<string, unknown>;
+    const err = validateContact(raw);
+    if (err) return errorResponse(err, 400);
+    const data = sanitizeInput(raw, 'contacts');
     const row = await client!.appendRow('contacts', data);
     return jsonResponse(row, 201);
 });
 
 router.add('PUT', '/api/v1/contacts/:id', async (request, params, client) => {
-    const data = await request.json() as Partial<SheetRow>;
+    const raw = await request.json() as Record<string, unknown>;
+    const data = sanitizeInput(raw, 'contacts');
     const row = await client!.updateRow('contacts', params.id, data);
     if (!row) return errorResponse('Contact not found', 404);
     return jsonResponse(row);
@@ -340,7 +419,10 @@ router.add('GET', '/api/v1/contacts/:id/notes', async (_, params, client) => {
 });
 
 router.add('POST', '/api/v1/contacts/:id/notes', async (request, params, client) => {
-    const data = await request.json() as SheetRow;
+    const raw = await request.json() as Record<string, unknown>;
+    const err = validateNote(raw);
+    if (err) return errorResponse(err, 400);
+    const data = sanitizeInput(raw, 'notes');
     data.contact_id = params.id;
     const row = await client!.appendRow('notes', data);
     return jsonResponse(row, 201);
@@ -359,13 +441,17 @@ router.add('GET', '/api/v1/companies/:id', async (_, params, client) => {
 });
 
 router.add('POST', '/api/v1/companies', async (request, _, client) => {
-    const data = await request.json() as SheetRow;
+    const raw = await request.json() as Record<string, unknown>;
+    const err = validateCompany(raw);
+    if (err) return errorResponse(err, 400);
+    const data = sanitizeInput(raw, 'companies');
     const row = await client!.appendRow('companies', data);
     return jsonResponse(row, 201);
 });
 
 router.add('PUT', '/api/v1/companies/:id', async (request, params, client) => {
-    const data = await request.json() as Partial<SheetRow>;
+    const raw = await request.json() as Record<string, unknown>;
+    const data = sanitizeInput(raw, 'companies');
     const row = await client!.updateRow('companies', params.id, data);
     if (!row) return errorResponse('Company not found', 404);
     return jsonResponse(row);
@@ -405,20 +491,24 @@ router.add('GET', '/api/v1/reminders', async (request, _, client) => {
 });
 
 router.add('POST', '/api/v1/reminders', async (request, _, client) => {
-    const data = await request.json() as SheetRow;
+    const raw = await request.json() as Record<string, unknown>;
+    const err = validateReminder(raw);
+    if (err) return errorResponse(err, 400);
+    const data = sanitizeInput(raw, 'reminders');
     // Convert boolean to string for Sheets
-    if (typeof data.is_done === 'boolean') {
-        data.is_done = data.is_done ? 'TRUE' : 'FALSE';
+    if (typeof raw.is_done === 'boolean') {
+        data.is_done = raw.is_done ? 'TRUE' : 'FALSE';
     }
     const row = await client!.appendRow('reminders', data);
     return jsonResponse({ ...row, is_done: row.is_done === 'TRUE' }, 201);
 });
 
 router.add('PUT', '/api/v1/reminders/:id', async (request, params, client) => {
-    const data = await request.json() as Partial<SheetRow>;
+    const raw = await request.json() as Record<string, unknown>;
+    const data = sanitizeInput(raw, 'reminders');
     // Convert boolean to string for Sheets
-    if (typeof data.is_done === 'boolean') {
-        data.is_done = data.is_done ? 'TRUE' : 'FALSE';
+    if (typeof raw.is_done === 'boolean') {
+        data.is_done = raw.is_done ? 'TRUE' : 'FALSE';
     }
     const row = await client!.updateRow('reminders', params.id, data);
     if (!row) return errorResponse('Reminder not found', 404);
@@ -440,6 +530,8 @@ router.add('GET', '/api/v1/health', async () => {
 
 export default {
     async fetch(request: Request, env: Env): Promise<Response> {
+        const corsHeaders = getCorsHeaders(request, env);
+
         // Handle CORS preflight
         if (request.method === 'OPTIONS') {
             return new Response(null, { headers: corsHeaders });
@@ -449,6 +541,23 @@ export default {
             const url = new URL(request.url);
             const path = url.pathname;
             const method = request.method;
+
+            // CSRF protection: validate Origin header on state-changing requests
+            if (['POST', 'PUT', 'DELETE'].includes(method)) {
+                const origin = request.headers.get('Origin');
+                const referer = request.headers.get('Referer');
+                const allowedOrigins = [
+                    env.FRONTEND_URL || '',
+                    'http://localhost:5173',
+                    'http://localhost:8787',
+                    url.origin,
+                ].filter(Boolean);
+
+                const requestOrigin = origin || (referer ? new URL(referer).origin : null);
+                if (!requestOrigin || !allowedOrigins.includes(requestOrigin)) {
+                    return errorResponse('Forbidden: invalid request origin', 403);
+                }
+            }
 
             const match = router.match(method, path);
             if (!match) {
@@ -467,24 +576,30 @@ export default {
                 client = createClient(session);
             }
 
-            const response = await match.handler(request, match.params, client, env, session);
+            let response = await match.handler(request, match.params, client, env, session);
 
             // If session was refreshed, update the cookie on the response
             if (session && match.requiresAuth) {
                 const encryptedSession = await encryptSession(session, env.COOKIE_SECRET);
                 const newHeaders = new Headers(response.headers);
                 newHeaders.set('Set-Cookie', buildSetCookie(SESSION_COOKIE_NAME, encryptedSession, SESSION_MAX_AGE));
-                return new Response(response.body, {
+                response = new Response(response.body, {
                     status: response.status,
                     headers: newHeaders,
                 });
             }
 
-            return response;
+            // Apply CORS headers to all responses centrally
+            const finalHeaders = new Headers(response.headers);
+            Object.entries(corsHeaders).forEach(([k, v]) => finalHeaders.set(k, v));
+            return new Response(response.body, {
+                status: response.status,
+                headers: finalHeaders,
+            });
         } catch (error) {
-            console.error('Error:', error);
-            const message = error instanceof Error ? error.message : 'Internal server error';
-            return errorResponse(message, 500);
+            console.error('Unhandled error:', error);
+            // Never leak internal error details to the client
+            return errorResponse('An unexpected error occurred. Please try again.', 500);
         }
     },
 };

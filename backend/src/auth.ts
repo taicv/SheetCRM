@@ -48,7 +48,7 @@ interface AuthSession {
 }
 
 // Build Google OAuth consent URL
-function getAuthorizationUrl(clientId: string, redirectUri: string): string {
+function getAuthorizationUrl(clientId: string, redirectUri: string, state: string): string {
     const params = new URLSearchParams({
         client_id: clientId,
         redirect_uri: redirectUri,
@@ -57,6 +57,7 @@ function getAuthorizationUrl(clientId: string, redirectUri: string): string {
         access_type: 'offline',   // Get refresh token
         prompt: 'consent',        // Always show consent to get refresh token
         include_granted_scopes: 'true',
+        state,                    // CSRF protection for OAuth flow
     });
     return `${GOOGLE_AUTH_URL}?${params.toString()}`;
 }
@@ -128,8 +129,8 @@ async function getUserInfo(accessToken: string): Promise<UserInfo> {
 
 // --- Cookie-based session management using AES-GCM encryption ---
 
-// Derive a CryptoKey from a secret string
-async function deriveKey(secret: string): Promise<CryptoKey> {
+// Derive a CryptoKey from a secret string and a salt
+async function deriveKey(secret: string, salt: Uint8Array): Promise<CryptoKey> {
     const keyMaterial = await crypto.subtle.importKey(
         'raw',
         new TextEncoder().encode(secret),
@@ -141,7 +142,7 @@ async function deriveKey(secret: string): Promise<CryptoKey> {
     return crypto.subtle.deriveKey(
         {
             name: 'PBKDF2',
-            salt: new TextEncoder().encode('sheetcrm-session-v1'),
+            salt,
             iterations: 100000,
             hash: 'SHA-256',
         },
@@ -153,8 +154,10 @@ async function deriveKey(secret: string): Promise<CryptoKey> {
 }
 
 // Encrypt session data into a cookie value
+// Format: salt(16) + iv(12) + ciphertext → base64
 async function encryptSession(session: AuthSession, secret: string): Promise<string> {
-    const key = await deriveKey(secret);
+    const salt = crypto.getRandomValues(new Uint8Array(16));
+    const key = await deriveKey(secret, salt);
     const iv = crypto.getRandomValues(new Uint8Array(12));
     const data = new TextEncoder().encode(JSON.stringify(session));
 
@@ -164,22 +167,26 @@ async function encryptSession(session: AuthSession, secret: string): Promise<str
         data
     );
 
-    // Combine IV + ciphertext into a single base64 string
-    const combined = new Uint8Array(iv.length + encrypted.byteLength);
-    combined.set(iv, 0);
-    combined.set(new Uint8Array(encrypted), iv.length);
+    // Combine salt + IV + ciphertext into a single base64 string
+    const combined = new Uint8Array(salt.length + iv.length + encrypted.byteLength);
+    combined.set(salt, 0);
+    combined.set(iv, salt.length);
+    combined.set(new Uint8Array(encrypted), salt.length + iv.length);
 
     return btoa(String.fromCharCode(...combined));
 }
 
 // Decrypt session data from a cookie value
+// Expected format: salt(16) + iv(12) + ciphertext
 async function decryptSession(encrypted: string, secret: string): Promise<AuthSession | null> {
     try {
-        const key = await deriveKey(secret);
         const combined = Uint8Array.from(atob(encrypted), c => c.charCodeAt(0));
 
-        const iv = combined.slice(0, 12);
-        const ciphertext = combined.slice(12);
+        const salt = combined.slice(0, 16);
+        const iv = combined.slice(16, 28);
+        const ciphertext = combined.slice(28);
+
+        const key = await deriveKey(secret, salt);
 
         const decrypted = await crypto.subtle.decrypt(
             { name: 'AES-GCM', iv },
@@ -211,7 +218,7 @@ function buildDeleteCookie(name: string): string {
 }
 
 const SESSION_COOKIE_NAME = 'sheetcrm_session';
-const SESSION_MAX_AGE = 30 * 24 * 60 * 60; // 30 days
+const SESSION_MAX_AGE = 7 * 24 * 60 * 60; // 7 days (reduced from 30 for security)
 
 // Find existing "SheetCRM Data" spreadsheet in user's Drive, or create a new one
 async function findOrCreateSpreadsheet(accessToken: string): Promise<string> {

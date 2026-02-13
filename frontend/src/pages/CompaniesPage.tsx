@@ -2,6 +2,20 @@ import { useState, useEffect } from 'react';
 import type { Company, CompanyFormData } from '@/types';
 import { companiesApi } from '@/services/api';
 
+// Validate and sanitize URLs — only allow http/https protocols
+function sanitizeUrl(url: string): string | null {
+    try {
+        const withProtocol = url.startsWith('http') ? url : `https://${url}`;
+        const parsed = new URL(withProtocol);
+        if (parsed.protocol === 'http:' || parsed.protocol === 'https:') {
+            return parsed.href;
+        }
+        return null;
+    } catch {
+        return null;
+    }
+}
+
 export function CompaniesPage() {
     const [companies, setCompanies] = useState<Company[]>([]);
     const [loading, setLoading] = useState(true);
@@ -113,16 +127,19 @@ export function CompaniesPage() {
                                 <div className="flex-1 min-w-0">
                                     <h3 className="font-semibold text-gray-900 truncate">{company.name}</h3>
                                     <p className="text-sm text-gray-500 truncate">{company.industry || 'Chưa phân loại'}</p>
-                                    {company.website && (
-                                        <a
-                                            href={company.website.startsWith('http') ? company.website : `https://${company.website}`}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="text-sm text-primary-600 hover:underline truncate block"
-                                        >
-                                            {company.website}
-                                        </a>
-                                    )}
+                                    {company.website && (() => {
+                                        const safeUrl = sanitizeUrl(company.website);
+                                        return safeUrl ? (
+                                            <a
+                                                href={safeUrl}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="text-sm text-primary-600 hover:underline truncate block"
+                                            >
+                                                {company.website}
+                                            </a>
+                                        ) : null;
+                                    })()}
                                 </div>
                             </div>
                             <div className="mt-4 pt-4 border-t border-gray-100 flex gap-2">

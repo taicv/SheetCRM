@@ -12,9 +12,16 @@ interface SheetsConfig {
 
 class GoogleSheetsClient {
     private config: SheetsConfig;
+    private static readonly ALLOWED_SHEETS = new Set(['contacts', 'companies', 'notes', 'reminders']);
 
     constructor(config: SheetsConfig) {
         this.config = config;
+    }
+
+    private validateSheetName(sheetName: string): void {
+        if (!GoogleSheetsClient.ALLOWED_SHEETS.has(sheetName)) {
+            throw new Error(`Invalid sheet name: ${sheetName}`);
+        }
     }
 
     private async fetch(endpoint: string, options?: RequestInit): Promise<Response> {
@@ -32,6 +39,7 @@ class GoogleSheetsClient {
 
     // Get all rows from a sheet
     async getRows(sheetName: string): Promise<SheetRow[]> {
+        this.validateSheetName(sheetName);
         const response = await this.fetch(`/values/${encodeURIComponent(sheetName)}`);
 
         if (!response.ok) {
@@ -56,6 +64,7 @@ class GoogleSheetsClient {
 
     // Append a new row
     async appendRow(sheetName: string, data: SheetRow): Promise<SheetRow> {
+        this.validateSheetName(sheetName);
         // First get headers
         const headersResponse = await this.fetch(`/values/${encodeURIComponent(sheetName)}!1:1`);
         const headersData: { values?: string[][] } = await headersResponse.json();
@@ -100,6 +109,7 @@ class GoogleSheetsClient {
 
     // Update a row by ID
     async updateRow(sheetName: string, id: string, data: Partial<SheetRow>): Promise<SheetRow | null> {
+        this.validateSheetName(sheetName);
         // Get all rows to find the row index
         const allRows = await this.getRows(sheetName);
         const rowIndex = allRows.findIndex(row => row.id === id);
@@ -145,6 +155,7 @@ class GoogleSheetsClient {
 
     // Delete a row by ID
     async deleteRow(sheetName: string, id: string): Promise<boolean> {
+        this.validateSheetName(sheetName);
         // Get all rows
         const allRows = await this.getRows(sheetName);
         const rowIndex = allRows.findIndex(row => row.id === id);
@@ -191,12 +202,14 @@ class GoogleSheetsClient {
 
     // Get a single row by ID
     async getRowById(sheetName: string, id: string): Promise<SheetRow | null> {
+        this.validateSheetName(sheetName);
         const rows = await this.getRows(sheetName);
         return rows.find(row => row.id === id) || null;
     }
 
     // Initialize sheet with headers if empty
     async initializeSheet(sheetName: string, headers: string[]): Promise<void> {
+        this.validateSheetName(sheetName);
         const response = await this.fetch(`/values/${encodeURIComponent(sheetName)}!1:1`);
         const data: { values?: string[][] } = await response.json();
 

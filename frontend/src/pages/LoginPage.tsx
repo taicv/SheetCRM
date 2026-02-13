@@ -1,9 +1,20 @@
 import { useAuth } from '@/context/AuthContext';
 
+// Whitelist of allowed OAuth error messages to prevent reflected content
+const ERROR_MESSAGES: Record<string, string> = {
+    access_denied: 'Access was denied. Please try again.',
+    server_error: 'A server error occurred during authentication.',
+    temporarily_unavailable: 'The service is temporarily unavailable. Please try later.',
+    invalid_scope: 'Invalid permissions requested. Please contact support.',
+};
+
 export function LoginPage() {
     const { login } = useAuth();
     const searchParams = new URLSearchParams(window.location.search);
-    const error = searchParams.get('error');
+    const errorParam = searchParams.get('error');
+    const error = errorParam
+        ? ERROR_MESSAGES[errorParam] || 'Authentication failed. Please try again.'
+        : null;
 
     return (
         <div className="login-page">

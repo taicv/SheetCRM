@@ -5,3 +5,4 @@ node_modules/
 .dev.vars
 frontend/test-results/
 .claude/
+frontend/dist/
