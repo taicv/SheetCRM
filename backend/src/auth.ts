@@ -8,7 +8,7 @@ const GOOGLE_USERINFO_URL = 'https://www.googleapis.com/oauth2/v2/userinfo';
 // Scopes needed: Sheets read/write + Drive file access + user email
 const SCOPES = [
     'https://www.googleapis.com/auth/spreadsheets',
-    'https://www.googleapis.com/auth/drive.file',
+    'https://www.googleapis.com/auth/drive.metadata.readonly',
     'https://www.googleapis.com/auth/userinfo.email',
     'https://www.googleapis.com/auth/userinfo.profile',
 ];
@@ -230,7 +230,6 @@ async function findOrCreateSpreadsheet(accessToken: string): Promise<string> {
     if (searchResponse.ok) {
         const searchData: { files?: Array<{ id: string; name: string }> } = await searchResponse.json();
         if (searchData.files && searchData.files.length > 0) {
-            // Found existing spreadsheet
             return searchData.files[0].id;
         }
     }
