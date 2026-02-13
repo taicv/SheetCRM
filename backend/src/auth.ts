@@ -1,134 +1,219 @@
-// Google Sheets API Authentication using Service Account JWT
-// Reference: https://developers.google.com/identity/protocols/oauth2/service-account
+// Google OAuth 2.0 Authentication for SheetCRM
+// Replaces Service Account auth with user-based OAuth flow
 
-interface ServiceAccountCredentials {
-    email: string;
-    privateKey: string;
-}
+const GOOGLE_AUTH_URL = 'https://accounts.google.com/o/oauth2/v2/auth';
+const GOOGLE_TOKEN_URL = 'https://oauth2.googleapis.com/token';
+const GOOGLE_USERINFO_URL = 'https://www.googleapis.com/oauth2/v2/userinfo';
 
-interface AccessTokenResponse {
+// Scopes needed: Sheets read/write + user email
+const SCOPES = [
+    'https://www.googleapis.com/auth/spreadsheets',
+    'https://www.googleapis.com/auth/userinfo.email',
+    'https://www.googleapis.com/auth/userinfo.profile',
+];
+
+interface OAuthTokens {
     access_token: string;
+    refresh_token?: string;
     expires_in: number;
     token_type: string;
+    scope?: string;
 }
 
-// Convert base64url to ArrayBuffer
-function base64UrlToArrayBuffer(base64url: string): ArrayBuffer {
-    const base64 = base64url.replace(/-/g, '+').replace(/_/g, '/');
-    const padding = '='.repeat((4 - (base64.length % 4)) % 4);
-    const binary = atob(base64 + padding);
-    const bytes = new Uint8Array(binary.length);
-    for (let i = 0; i < binary.length; i++) {
-        bytes[i] = binary.charCodeAt(i);
-    }
-    return bytes.buffer;
+interface UserInfo {
+    email: string;
+    name: string;
+    picture: string;
 }
 
-// Convert ArrayBuffer to base64url
-function arrayBufferToBase64Url(buffer: ArrayBuffer): string {
-    const bytes = new Uint8Array(buffer);
-    let binary = '';
-    for (let i = 0; i < bytes.length; i++) {
-        binary += String.fromCharCode(bytes[i]);
-    }
-    const base64 = btoa(binary);
-    return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+interface AuthSession {
+    accessToken: string;
+    refreshToken: string;
+    expiresAt: number; // Unix timestamp in ms
+    email: string;
+    name: string;
+    picture: string;
 }
 
-// Parse PEM private key to CryptoKey
-async function importPrivateKey(pem: string): Promise<CryptoKey> {
-    // Remove PEM headers and newlines
-    const pemContents = pem
-        .replace(/-----BEGIN PRIVATE KEY-----/g, '')
-        .replace(/-----END PRIVATE KEY-----/g, '')
-        .replace(/-----BEGIN RSA PRIVATE KEY-----/g, '')
-        .replace(/-----END RSA PRIVATE KEY-----/g, '')
-        .replace(/\s/g, '');
-
-    const keyData = base64UrlToArrayBuffer(
-        pemContents.replace(/\+/g, '-').replace(/\//g, '_')
-    );
-
-    return await crypto.subtle.importKey(
-        'pkcs8',
-        keyData,
-        {
-            name: 'RSASSA-PKCS1-v1_5',
-            hash: 'SHA-256',
-        },
-        false,
-        ['sign']
-    );
+// Build Google OAuth consent URL
+function getAuthorizationUrl(clientId: string, redirectUri: string): string {
+    const params = new URLSearchParams({
+        client_id: clientId,
+        redirect_uri: redirectUri,
+        response_type: 'code',
+        scope: SCOPES.join(' '),
+        access_type: 'offline',   // Get refresh token
+        prompt: 'consent',        // Always show consent to get refresh token
+        include_granted_scopes: 'true',
+    });
+    return `${GOOGLE_AUTH_URL}?${params.toString()}`;
 }
 
-// Create signed JWT
-async function createSignedJWT(
-    credentials: ServiceAccountCredentials,
-    scopes: string[]
-): Promise<string> {
-    const now = Math.floor(Date.now() / 1000);
-    const exp = now + 3600; // 1 hour
-
-    const header = {
-        alg: 'RS256',
-        typ: 'JWT',
-    };
-
-    const payload = {
-        iss: credentials.email,
-        scope: scopes.join(' '),
-        aud: 'https://oauth2.googleapis.com/token',
-        iat: now,
-        exp: exp,
-    };
-
-    const encodedHeader = arrayBufferToBase64Url(
-        new TextEncoder().encode(JSON.stringify(header))
-    );
-    const encodedPayload = arrayBufferToBase64Url(
-        new TextEncoder().encode(JSON.stringify(payload))
-    );
-
-    const signatureInput = `${encodedHeader}.${encodedPayload}`;
-
-    const privateKey = await importPrivateKey(credentials.privateKey);
-    const signature = await crypto.subtle.sign(
-        'RSASSA-PKCS1-v1_5',
-        privateKey,
-        new TextEncoder().encode(signatureInput)
-    );
-
-    const encodedSignature = arrayBufferToBase64Url(signature);
-
-    return `${signatureInput}.${encodedSignature}`;
-}
-
-// Exchange JWT for access token
-async function getAccessToken(
-    credentials: ServiceAccountCredentials
-): Promise<string> {
-    const jwt = await createSignedJWT(credentials, [
-        'https://www.googleapis.com/auth/spreadsheets',
-    ]);
-
-    const response = await fetch('https://oauth2.googleapis.com/token', {
+// Exchange authorization code for tokens
+async function exchangeCodeForTokens(
+    code: string,
+    clientId: string,
+    clientSecret: string,
+    redirectUri: string
+): Promise<OAuthTokens> {
+    const response = await fetch(GOOGLE_TOKEN_URL, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: new URLSearchParams({
-            grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
-            assertion: jwt,
+            code,
+            client_id: clientId,
+            client_secret: clientSecret,
+            redirect_uri: redirectUri,
+            grant_type: 'authorization_code',
         }),
     });
 
     if (!response.ok) {
         const error = await response.text();
-        throw new Error(`Failed to get access token: ${error}`);
+        throw new Error(`Token exchange failed: ${error}`);
     }
 
-    const data: AccessTokenResponse = await response.json();
-    return data.access_token;
+    return response.json();
 }
 
-export { getAccessToken, type ServiceAccountCredentials };
+// Refresh an expired access token
+async function refreshAccessToken(
+    refreshToken: string,
+    clientId: string,
+    clientSecret: string
+): Promise<OAuthTokens> {
+    const response = await fetch(GOOGLE_TOKEN_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+            refresh_token: refreshToken,
+            client_id: clientId,
+            client_secret: clientSecret,
+            grant_type: 'refresh_token',
+        }),
+    });
+
+    if (!response.ok) {
+        const error = await response.text();
+        throw new Error(`Token refresh failed: ${error}`);
+    }
+
+    return response.json();
+}
+
+// Fetch user info from Google
+async function getUserInfo(accessToken: string): Promise<UserInfo> {
+    const response = await fetch(GOOGLE_USERINFO_URL, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+    });
+
+    if (!response.ok) {
+        throw new Error('Failed to fetch user info');
+    }
+
+    return response.json();
+}
+
+// --- Cookie-based session management using AES-GCM encryption ---
+
+// Derive a CryptoKey from a secret string
+async function deriveKey(secret: string): Promise<CryptoKey> {
+    const keyMaterial = await crypto.subtle.importKey(
+        'raw',
+        new TextEncoder().encode(secret),
+        { name: 'PBKDF2' },
+        false,
+        ['deriveKey']
+    );
+
+    return crypto.subtle.deriveKey(
+        {
+            name: 'PBKDF2',
+            salt: new TextEncoder().encode('sheetcrm-session-v1'),
+            iterations: 100000,
+            hash: 'SHA-256',
+        },
+        keyMaterial,
+        { name: 'AES-GCM', length: 256 },
+        false,
+        ['encrypt', 'decrypt']
+    );
+}
+
+// Encrypt session data into a cookie value
+async function encryptSession(session: AuthSession, secret: string): Promise<string> {
+    const key = await deriveKey(secret);
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const data = new TextEncoder().encode(JSON.stringify(session));
+
+    const encrypted = await crypto.subtle.encrypt(
+        { name: 'AES-GCM', iv },
+        key,
+        data
+    );
+
+    // Combine IV + ciphertext into a single base64 string
+    const combined = new Uint8Array(iv.length + encrypted.byteLength);
+    combined.set(iv, 0);
+    combined.set(new Uint8Array(encrypted), iv.length);
+
+    return btoa(String.fromCharCode(...combined));
+}
+
+// Decrypt session data from a cookie value
+async function decryptSession(encrypted: string, secret: string): Promise<AuthSession | null> {
+    try {
+        const key = await deriveKey(secret);
+        const combined = Uint8Array.from(atob(encrypted), c => c.charCodeAt(0));
+
+        const iv = combined.slice(0, 12);
+        const ciphertext = combined.slice(12);
+
+        const decrypted = await crypto.subtle.decrypt(
+            { name: 'AES-GCM', iv },
+            key,
+            ciphertext
+        );
+
+        return JSON.parse(new TextDecoder().decode(decrypted));
+    } catch {
+        return null;
+    }
+}
+
+// Parse a cookie header to find a specific cookie
+function parseCookie(cookieHeader: string | null, name: string): string | null {
+    if (!cookieHeader) return null;
+    const match = cookieHeader.match(new RegExp(`(?:^|;\\s*)${name}=([^;]*)`));
+    return match ? decodeURIComponent(match[1]) : null;
+}
+
+// Build a Set-Cookie header value
+function buildSetCookie(name: string, value: string, maxAge: number): string {
+    return `${name}=${encodeURIComponent(value)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${maxAge}`;
+}
+
+// Build a cookie deletion header
+function buildDeleteCookie(name: string): string {
+    return `${name}=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0`;
+}
+
+const SESSION_COOKIE_NAME = 'sheetcrm_session';
+const SESSION_MAX_AGE = 30 * 24 * 60 * 60; // 30 days
+
+export {
+    getAuthorizationUrl,
+    exchangeCodeForTokens,
+    refreshAccessToken,
+    getUserInfo,
+    encryptSession,
+    decryptSession,
+    parseCookie,
+    buildSetCookie,
+    buildDeleteCookie,
+    SESSION_COOKIE_NAME,
+    SESSION_MAX_AGE,
+    type AuthSession,
+    type OAuthTokens,
+    type UserInfo,
+};

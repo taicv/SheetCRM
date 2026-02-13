@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import type { DashboardStats, Contact, Company, Reminder } from '@/types';
+import type { DashboardStats, Contact, Reminder } from '@/types';
 import { contactsApi, companiesApi, remindersApi } from '@/services/api';
 
 export function DashboardPage() {

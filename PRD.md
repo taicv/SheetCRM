@@ -295,17 +295,17 @@
 │                 │ ───────────────► │                     │
 │   Vite + React  │                  │  Cloudflare Workers │
 │   (Frontend)    │ ◄─────────────── │     (Backend API)   │
-│                 │      JSON        │                     │
+│                 │   JSON + Cookie  │                     │
 └─────────────────┘                  └─────────────────────┘
-                                              │
-                                              │ Google Sheets API
-                                              │ (Service Account)
-                                              ▼
-                                     ┌─────────────────────┐
-                                     │                     │
-                                     │   Google Sheets     │
-                                     │   (Database)        │
-                                     │                     │
+        │                                     │
+        │ OAuth 2.0 Login                     │ Google Sheets API
+        ▼                                     │ (User's OAuth token)
+┌─────────────────┐                           ▼
+│                 │                  ┌─────────────────────┐
+│ Google OAuth    │                  │                     │
+│ (Sign-in)       │                  │   Google Sheets     │
+│                 │                  │   (Database)        │
+└─────────────────┘                  │                     │
                                      └─────────────────────┘
 ```
 
@@ -341,7 +341,7 @@
 | **Styling** | Tailwind CSS | Rapid UI development, utility-first |
 | **Backend** | Cloudflare Workers | Edge computing, free tier generous |
 | **Database** | Google Sheets | User requirement, familiar to users |
-| **Auth** | Service Account JWT | Secure server-to-server auth |
+| **Auth** | Google OAuth 2.0 | User sign-in, grants Sheets access |
 
 ---
 
@@ -470,21 +470,26 @@ Border:     #E5E7EB (Gray-200) - Borders
 
 ## 12. Security Considerations
 
-### Authentication Flow
-1. Backend uses **Service Account** credentials
-2. JWT generated for each API call to Google Sheets
-3. Service Account email shared with the Sheet
+### Authentication Flow (OAuth 2.0)
+1. User clicks "Sign in with Google" → redirected to Google consent screen
+2. User grants permission to access Google Sheets
+3. Backend exchanges auth code for access + refresh tokens
+4. Session stored in AES-GCM encrypted HttpOnly cookie (stateless)
+5. Access tokens auto-refresh when expired
+6. All data endpoints return 401 if not authenticated
 
 ### Data Protection
-- No user credentials stored
+- No user credentials stored on server
+- Tokens encrypted in HttpOnly, Secure, SameSite cookies
 - HTTPS only
-- Service Account key stored as Cloudflare secret
+- OAuth Client Secret stored as Cloudflare secret
 - Rate limiting on API
 
 ### Privacy
 - Data stays in user's Google Drive
 - No third-party data storage
 - User maintains full data ownership
+- User can revoke access anytime via Google Account settings
 
 ---
 

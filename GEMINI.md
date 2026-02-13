@@ -31,27 +31,25 @@
   - Reminders with due dates
   - Dashboard stats
   - Google Sheets dual-mode (web app + direct Sheets editing)
+  - **Google OAuth 2.0 user authentication** (Sign in with Google)
 - **Infrastructure**: Cloudflare Pages (static hosting) + Cloudflare Workers (API)
+- **Auth**: OAuth 2.0 (user signs in with Google, grants Sheets access)
 
 ### Current Phase
-- **Status**: ✅ Phase 5 (Testing) complete - 6/7 tests passed (85.7%)
-- **Next**: Phase 6 (Fine-tune & Loop) - Awaiting user feedback
+- **Status**: Phase 6 (Fine-tune & Loop) — OAuth 2.0 migration complete, awaiting TEST_PLAN review
+- **Next**: Manual testing with real Google OAuth credentials
 
-### Test Results Summary
-| Test | Description | Result |
-|------|-------------|--------|
-| TC-01 | Dashboard Load | ✅ PASS |
-| TC-02 | Contact CRUD | ✅ PASS |
-| TC-03 | Company CRUD | ✅ PASS |
-| TC-04 | Reminder CRUD | ⚠️ PARTIAL |
-| TC-05 | Navigation | ✅ PASS |
-| TC-06 | Search | ✅ PASS |
-| TC-07 | Google Sheets Sync | ✅ PASS |
+### Auth Architecture (OAuth 2.0)
+- Backend handles full OAuth flow (login redirect, callback, token exchange)
+- Sessions stored in AES-GCM encrypted HttpOnly cookies (stateless)
+- Auto token refresh when access token expires
+- All data endpoints protected (return 401 if not authenticated)
+- Frontend shows login page if unauthenticated
 
 ### Primary Documentation
 - `PRD.md` - Full product requirements
 - `IMPLEMENTATION_PLAN.md` - Task tracking (all complete ✅)
-- `TEST_PLAN.md` - Test cases and results
+- `TEST_PLAN.md` - OAuth 2.0 test cases + Google Cloud Console setup instructions
 
 ### Coding Guidelines
 - Follow `IMPLEMENTATION_PLAN.md` for tasks
@@ -63,6 +61,13 @@
 ### Google Sheet Database
 - **Spreadsheet ID**: `1qqciTWousoyZf1ZlIo7HWAQM2i81sJRWdF5nuZr8KN0`
 - **Sheets**: contacts, companies, notes, reminders
+
+### Environment Variables (backend/.dev.vars)
+```
+GOOGLE_CLIENT_ID=xxx.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=xxx
+COOKIE_SECRET=random-string-32-chars-min
+```
 
 ### Running the Application
 ```bash

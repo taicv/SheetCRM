@@ -15,11 +15,18 @@ const API_BASE = '/api/v1';
 async function fetchApi<T>(endpoint: string, options?: RequestInit): Promise<T> {
     const response = await fetch(`${API_BASE}${endpoint}`, {
         ...options,
+        credentials: 'include', // Send cookies for auth
         headers: {
             'Content-Type': 'application/json',
             ...options?.headers,
         },
     });
+
+    if (response.status === 401) {
+        // Unauthorized - redirect to login
+        window.location.href = '/';
+        throw new Error('Session expired. Please sign in again.');
+    }
 
     if (!response.ok) {
         const error = await response.json().catch(() => ({ error: 'Unknown error' }));

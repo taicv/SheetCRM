@@ -1,144 +1,152 @@
-# MiniCRM - Google Sheets Edition
+# SheetCRM - Google Sheets CRM
 
-Ứng dụng CRM nhẹ sử dụng Google Sheets làm database, phù hợp cho doanh nghiệp siêu nhỏ và hộ kinh doanh cá nhân.
+A lightweight CRM using Google Sheets as database, built for small businesses and freelancers.
 
-## 📁 Cấu trúc Project
+## 📁 Project Structure
 
 ```
-buoi-5/
+SheetCRM/
 ├── frontend/           # React + Vite + TypeScript + Tailwind
 │   ├── src/
-│   │   ├── components/ # Layout components
-│   │   ├── pages/      # Page components
+│   │   ├── components/ # Layout components (Header, Sidebar)
+│   │   ├── context/    # Auth context (OAuth state management)
+│   │   ├── pages/      # Page components (Dashboard, Contacts, etc.)
 │   │   ├── services/   # API client
 │   │   └── types/      # TypeScript types
 │   └── package.json
 ├── backend/            # Cloudflare Workers API
 │   ├── src/
-│   │   ├── auth.ts     # Google OAuth JWT signing
+│   │   ├── auth.ts     # Google OAuth 2.0 + session cookies
 │   │   ├── sheets.ts   # Google Sheets CRUD client
-│   │   └── index.ts    # API router
-│   └── wrangler.toml
+│   │   └── index.ts    # API router + auth middleware
+│   └── wrangler.jsonc
 ├── PRD.md              # Product Requirements
-└── IMPLEMENTATION_PLAN.md
+├── IMPLEMENTATION_PLAN.md
+└── TEST_PLAN.md
 ```
 
 ## 🚀 Quick Start
 
-### 1. Fix npm permissions (nếu gặp lỗi EPERM)
+### 1. Install Dependencies
 
 ```bash
-sudo chown -R $(whoami) ~/.npm
+cd frontend && pnpm install
+cd ../backend && pnpm install
 ```
 
-### 2. Install Frontend Dependencies
+### 2. Setup Google OAuth 2.0 Credentials
 
-```bash
-cd frontend
-npm install
+1. Go to [Google Cloud Console](https://console.cloud.google.com/apis/credentials)
+2. Create or select a project
+3. Enable the **Google Sheets API** (APIs & Services → Library)
+4. Go to **Credentials** → **Create Credentials** → **OAuth 2.0 Client IDs**
+5. Application type: **Web application**
+6. Authorized redirect URIs: `http://localhost:8787/api/v1/auth/callback`
+7. Configure the **OAuth consent screen** (add your email as test user)
+8. Copy the **Client ID** and **Client Secret**
+
+### 3. Configure Backend Environment
+
+Create `backend/.dev.vars` (copy from `.dev.vars.example`):
+
+```
+GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=your-client-secret
+COOKIE_SECRET=any-random-string-at-least-32-characters-long
 ```
 
-### 3. Install Backend Dependencies
+### 4. Setup Google Sheet
 
-```bash
-cd backend
-npm install
-```
+1. Open your [Google Spreadsheet](https://docs.google.com/spreadsheets/d/1qqciTWousoyZf1ZlIo7HWAQM2i81sJRWdF5nuZr8KN0)
+2. Create 4 tabs: `contacts`, `companies`, `notes`, `reminders`
+3. Make sure your Google account has edit access to the spreadsheet
 
-### 4. Setup Google Service Account
-
-1. Vào [Google Cloud Console](https://console.cloud.google.com)
-2. Tạo project mới hoặc chọn project có sẵn
-3. Enable **Google Sheets API**
-4. Vào **IAM & Admin > Service Accounts**
-5. Tạo Service Account mới
-6. Tạo Key (JSON format), download file JSON
-
-### 5. Share Google Sheet với Service Account
-
-1. Mở [Google Sheet của bạn](https://docs.google.com/spreadsheets/d/1qqciTWousoyZf1ZlIo7HWAQM2i81sJRWdF5nuZr8KN0)
-2. Click **Share**
-3. Thêm email của Service Account (từ file JSON: `client_email`)
-4. Cấp quyền **Editor**
-
-### 6. Tạo 4 sheets trong Google Spreadsheet
-
-Tạo 4 tab với tên chính xác:
-- `contacts`
-- `companies`
-- `notes`
-- `reminders`
-
-### 7. Configure Backend Secrets
-
-```bash
-cd backend
-
-# Set service account email
-npx wrangler secret put GOOGLE_SERVICE_ACCOUNT_EMAIL
-# Paste: email từ file JSON
-
-# Set private key
-npx wrangler secret put GOOGLE_PRIVATE_KEY
-# Paste: private_key từ file JSON (bao gồm cả \n)
-```
-
-### 8. Run Development Servers
+### 5. Run Development Servers
 
 **Terminal 1 - Backend:**
 ```bash
 cd backend
-npm run dev
+pnpm wrangler dev
 # API runs at http://localhost:8787
 ```
 
 **Terminal 2 - Frontend:**
 ```bash
 cd frontend
-npm run dev
+pnpm dev
 # App runs at http://localhost:5173
 ```
 
-### 9. Initialize Google Sheets Headers
+### 6. Initialize Google Sheets Headers
 
-Sau khi backend chạy, gọi API init một lần:
+After login, call the init API once:
 ```bash
-curl -X POST http://localhost:8787/api/v1/init
+curl -X POST http://localhost:8787/api/v1/init --cookie "your-session-cookie"
 ```
+
+Or simply use the app — headers are checked automatically.
 
 ## 🔧 Tech Stack
 
 - **Frontend**: Vite + React 18 + TypeScript + Tailwind CSS
 - **Backend**: Cloudflare Workers
 - **Database**: Google Sheets API v4
-- **Auth**: Service Account JWT
+- **Auth**: Google OAuth 2.0 (user sign-in with consent)
 
 ## 📋 Features
 
-- ✅ Quản lý Contacts (CRUD)
-- ✅ Quản lý Companies (CRUD)
+- ✅ Google OAuth 2.0 sign-in (Sign in with Google)
+- ✅ Contact management (CRUD)
+- ✅ Company management (CRUD)
 - ✅ Notes/Activities timeline
-- ✅ Reminders với due dates
-- ✅ Dashboard thống kê
-- ✅ Google Sheets sync (web app + direct editing)
+- ✅ Reminders with due dates
+- ✅ Dashboard with stats
+- ✅ Google Sheets sync (web app + direct Sheets editing)
+
+## 🔐 Authentication Flow
+
+1. User clicks "Sign in with Google"
+2. Redirected to Google OAuth consent screen
+3. User grants Sheets access permission
+4. Backend exchanges auth code for tokens
+5. Session stored in encrypted HttpOnly cookie
+6. All API calls authenticated via cookie
+7. Tokens auto-refresh when expired
 
 ## 🚢 Deployment
 
 ### Frontend (Cloudflare Pages)
 ```bash
 cd frontend
-npm run build
+pnpm build
 # Deploy dist/ folder to Cloudflare Pages
 ```
 
 ### Backend (Cloudflare Workers)
 ```bash
 cd backend
-npm run deploy
+pnpm wrangler deploy
+
+# Set secrets for production
+pnpm wrangler secret put GOOGLE_CLIENT_ID
+pnpm wrangler secret put GOOGLE_CLIENT_SECRET
+pnpm wrangler secret put COOKIE_SECRET
 ```
+
+> **Note:** Update the OAuth redirect URI in Google Cloud Console to match your production URL:
+> `https://your-worker.workers.dev/api/v1/auth/callback`
 
 ## 📝 API Endpoints
 
+### Auth (public)
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/v1/auth/login` | GET | Redirect to Google OAuth |
+| `/api/v1/auth/callback` | GET | OAuth callback handler |
+| `/api/v1/auth/status` | GET | Check auth status |
+| `/api/v1/auth/logout` | POST | Sign out |
+
+### Data (authenticated)
 | Endpoint | Method | Description |
 |----------|--------|-------------|
 | `/api/v1/contacts` | GET, POST | List/Create contacts |

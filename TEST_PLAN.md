@@ -1,103 +1,44 @@
-# MiniCRM Test Plan
+# TEST_PLAN.md - OAuth 2.0 Migration
 
-## Test Environment
-- **Frontend**: http://localhost:5173 (Vite dev server)
-- **Backend**: http://localhost:8787 (Cloudflare Workers local)
-- **Database**: Google Sheets
+## Prerequisites (Manual Setup Required)
+
+Before testing, you need to create Google OAuth 2.0 credentials:
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com/apis/credentials)
+2. Create or select a project
+3. Enable the **Google Sheets API** (APIs & Services → Library)
+4. Go to **Credentials** → **Create Credentials** → **OAuth 2.0 Client IDs**
+5. Application type: **Web application**
+6. Authorized redirect URIs: `http://localhost:8787/api/v1/auth/callback`
+7. Copy the **Client ID** and **Client Secret**
+8. Create `backend/.dev.vars` (copy from `.dev.vars.example`):
+   ```
+   GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
+   GOOGLE_CLIENT_SECRET=your-client-secret
+   COOKIE_SECRET=any-random-string-at-least-32-characters-long
+   ```
+9. Also configure the **OAuth consent screen** (add your email as test user)
 
 ## Test Cases
 
-### TC-01: Dashboard Load
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | Navigate to http://localhost:5173 | Dashboard page loads |
-| 2 | Wait for data to load | Stats cards show numbers |
-| 3 | Check stats cards | Shows Contacts, Companies, Reminders counts |
-| 4 | Check recent contacts list | Shows list or "Chưa có contact nào" |
-| 5 | Check upcoming reminders | Shows list or "Không có reminders" |
+| # | Test | Steps | Expected | Status |
+|---|------|-------|----------|--------|
+| TC-01 | Login Page Display | Start frontend + backend, open `http://localhost:5173` | See login page with gradient background, SheetCRM logo, "Sign in with Google" button | ⬜ |
+| TC-02 | OAuth Login Flow | Click "Sign in with Google" | Redirects to Google consent screen, after approval redirects back to dashboard | ⬜ |
+| TC-03 | Session Persistence | After login, refresh the page | Still logged in, dashboard loads | ⬜ |
+| TC-04 | User Profile in Header | After login, look at header | User's Google profile picture, name displayed. Click → dropdown with email + "Sign Out" | ⬜ |
+| TC-05 | Contact CRUD | Create, edit, delete a contact | All operations succeed using user's OAuth token | ⬜ |
+| TC-06 | API Auth Protection | Open `http://localhost:8787/api/v1/contacts` in new incognito tab | Returns 401 Unauthorized | ⬜ |
+| TC-07 | Logout Flow | Click "Sign Out" in header dropdown | Returns to login page. Refresh stays on login page | ⬜ |
 
-### TC-02: Contact CRUD
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | Navigate to Contacts page | Contacts page loads |
-| 2 | Click "+ Thêm Contact" | Modal opens |
-| 3 | Fill name: "Test User" | Input accepts text |
-| 4 | Fill email: "test@example.com" | Input accepts email |
-| 5 | Fill phone: "0912345678" | Input accepts phone |
-| 6 | Click "Thêm" button | Modal closes, contact appears in list |
-| 7 | Find created contact in list | Contact "Test User" visible |
-| 8 | Click "Sửa" on contact | Edit modal opens with data |
-| 9 | Change name to "Test User Updated" | Input changes |
-| 10 | Click "Cập nhật" | Modal closes, name updated in list |
-| 11 | Click "Xóa" on contact | Confirm dialog appears |
-| 12 | Confirm deletion | Contact removed from list |
+## How to Run
 
-### TC-03: Company CRUD
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | Navigate to Companies page | Companies page loads |
-| 2 | Click "+ Thêm Company" | Modal opens |
-| 3 | Fill name: "Test Company" | Input accepts text |
-| 4 | Fill industry: "Technology" | Input accepts text |
-| 5 | Click "Thêm" button | Modal closes, company card appears |
-| 6 | Find created company | Company "Test Company" visible |
-| 7 | Click "Xóa" on company | Company removed |
+```bash
+# Terminal 1 - Backend
+cd backend && pnpm wrangler dev
 
-### TC-04: Reminder CRUD
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | Navigate to Reminders page | Reminders page loads |
-| 2 | Click "+ Thêm Reminder" | Modal opens |
-| 3 | Select a contact | Dropdown shows contacts |
-| 4 | Fill title: "Follow up call" | Input accepts text |
-| 5 | Set due date: tomorrow | Date picker works |
-| 6 | Click "Thêm" button | Modal closes, reminder appears |
-| 7 | Click checkbox to mark done | Reminder shows as completed |
-| 8 | Switch to "Hoàn thành" tab | Completed reminder visible |
-| 9 | Delete reminder | Reminder removed |
+# Terminal 2 - Frontend  
+cd frontend && pnpm dev
+```
 
-### TC-05: Navigation
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | Click "Dashboard" in sidebar | Navigate to / |
-| 2 | Click "Contacts" in sidebar | Navigate to /contacts |
-| 3 | Click "Companies" in sidebar | Navigate to /companies |
-| 4 | Click "Reminders" in sidebar | Navigate to /reminders |
-| 5 | Check active state highlighting | Current page highlighted in sidebar |
-
-### TC-06: Search Functionality
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | Go to Contacts page | Page loads |
-| 2 | Type search term in search box | Results filter as you type |
-| 3 | Clear search | All contacts shown again |
-
-### TC-07: Google Sheets Sync
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | Click "Đồng bộ" in header | Loading state appears |
-| 2 | Wait for sync | Data refreshes |
-| 3 | Click "Open Google Sheet" | Google Sheets opens in new tab |
-
----
-
-## Test Execution Log
-
-| Test ID | Status | Notes |
-|---------|--------|-------|
-| TC-01 | ✅ PASS | Dashboard loads, stats cards show 0 contacts/companies/reminders |
-| TC-02 | ✅ PASS | Contact CREATE, UPDATE, DELETE all working |
-| TC-03 | ✅ PASS | Company CREATE and DELETE working |
-| TC-04 | ⚠️ PARTIAL | CREATE/TOGGLE PASS, DELETE FAIL (confirm dialog issue) |
-| TC-05 | ✅ PASS | All navigation works correctly |
-| TC-06 | ✅ PASS | Search filters contacts in real-time |
-| TC-07 | ✅ PASS | Sync button refreshes data from Google Sheets |
-
-## Summary
-- **Total Tests**: 7
-- **Passed**: 6
-- **Partial**: 1 (TC-04 - Reminder DELETE)
-- **Pass Rate**: 85.7%
-
-## Known Issues
-1. **TC-04 Reminder Delete**: Reminder deletion requires confirm dialog which automation had trouble handling. Manual deletion works correctly.
+Open `http://localhost:5173` in your browser.

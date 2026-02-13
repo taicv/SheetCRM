@@ -1,6 +1,5 @@
 // Google Sheets API client for Cloudflare Workers
-
-import { getAccessToken, type ServiceAccountCredentials } from './auth';
+// Uses user's OAuth access token (not service account)
 
 interface SheetRow {
     [key: string]: string;
@@ -8,37 +7,23 @@ interface SheetRow {
 
 interface SheetsConfig {
     spreadsheetId: string;
-    credentials: ServiceAccountCredentials;
+    accessToken: string;
 }
 
 class GoogleSheetsClient {
     private config: SheetsConfig;
-    private accessToken: string | null = null;
-    private tokenExpiry: number = 0;
 
     constructor(config: SheetsConfig) {
         this.config = config;
     }
 
-    private async getToken(): Promise<string> {
-        // Cache token for 50 minutes (expires in 60)
-        if (this.accessToken && Date.now() < this.tokenExpiry) {
-            return this.accessToken;
-        }
-
-        this.accessToken = await getAccessToken(this.config.credentials);
-        this.tokenExpiry = Date.now() + 50 * 60 * 1000;
-        return this.accessToken;
-    }
-
     private async fetch(endpoint: string, options?: RequestInit): Promise<Response> {
-        const token = await this.getToken();
         const url = `https://sheets.googleapis.com/v4/spreadsheets/${this.config.spreadsheetId}${endpoint}`;
 
         return fetch(url, {
             ...options,
             headers: {
-                'Authorization': `Bearer ${token}`,
+                'Authorization': `Bearer ${this.config.accessToken}`,
                 'Content-Type': 'application/json',
                 ...options?.headers,
             },

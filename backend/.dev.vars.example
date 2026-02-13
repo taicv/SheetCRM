@@ -1,6 +1,12 @@
 # Cloudflare Workers Local Development Secrets
-# Put your Google Service Account credentials here for local development
+# Put your Google OAuth 2.0 credentials here for local development
 # DO NOT commit this file to version control!
 
-GOOGLE_SERVICE_ACCOUNT_EMAIL=your-service-account@your-project.iam.gserviceaccount.com
-GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nYOUR_PRIVATE_KEY_HERE\n-----END PRIVATE KEY-----\n"
+# Get these from Google Cloud Console > APIs & Services > Credentials
+# Create an OAuth 2.0 Client ID (Web application type)
+# Authorized redirect URI: http://localhost:8787/api/v1/auth/callback
+GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=your-client-secret
+
+# Secret key for encrypting session cookies (generate a random 32+ char string)
+COOKIE_SECRET=change-this-to-a-random-secret-string-at-least-32-chars
