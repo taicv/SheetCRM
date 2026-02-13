@@ -1,5 +1,8 @@
 {
     "name": "sheetcrm",
     "compatibility_date": "2024-06-14",
-    "main": "src/index.ts"
+    "main": "src/index.ts",
+    "assets": {
+        "directory": "../frontend/dist"
+    }
 }
