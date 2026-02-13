@@ -1,17 +1,20 @@
 # Product Requirements Document
+
 # MiniCRM - Google Sheets Edition
 
 ## 1. Product Overview
 
-**MiniCRM** là một ứng dụng quản lý quan hệ khách hàng (CRM) nhẹ, được thiết kế đặc biệt cho **doanh nghiệp siêu nhỏ và hộ kinh doanh cá nhân** tại Việt Nam. 
+**MiniCRM** là một ứng dụng quản lý quan hệ khách hàng (CRM) nhẹ, được thiết kế đặc biệt cho **doanh nghiệp siêu nhỏ và hộ kinh doanh cá nhân** tại Việt Nam.
 
 Điểm độc đáo của MiniCRM là sử dụng **Google Sheets làm database**, cho phép người dùng:
+
 - Sử dụng web app với giao diện hiện đại
 - Trực tiếp thao tác trên Google Sheets khi cần
 - Không cần setup server database phức tạp
 - Chi phí vận hành gần như bằng 0
 
 **Vấn đề giải quyết:**
+
 - Doanh nghiệp nhỏ cần CRM nhưng ngại chi phí/phức tạp của các hệ thống lớn
 - Nhiều người đã quen dùng Google Sheets để quản lý khách hàng nhưng thiếu giao diện chuyên nghiệp
 - Cần giải pháp có thể vừa dùng app vừa edit trực tiếp trên Sheets
@@ -21,16 +24,19 @@
 ## 2. Goals & Objectives
 
 ### Primary Goals
+
 - **Đơn giản hóa**: Giao diện dễ sử dụng, không cần training
 - **Chi phí thấp**: Chỉ cần tài khoản Google, hosting miễn phí trên Cloudflare
 - **Linh hoạt**: Có thể thao tác qua web app hoặc trực tiếp trên Google Sheets
 
 ### Success Metrics
+
 - Thời gian onboarding < 5 phút
 - Load time < 2 giây
 - Hỗ trợ đến 5,000 contacts (phù hợp doanh nghiệp nhỏ)
 
 ### Key Differentiators
+
 - **Dual-mode**: Web app + Google Sheets editing
 - **Zero infrastructure**: Không cần database server
 - **Vietnamese-first**: Giao diện và UX tối ưu cho người Việt
@@ -40,16 +46,19 @@
 ## 3. Target Users
 
 ### Persona 1: Chủ cửa hàng online
+
 - **Mô tả**: Bán hàng trên Facebook/Instagram, 50-500 khách hàng
 - **Nhu cầu**: Ghi chú đơn hàng, lịch sử mua sắm, nhắc nhở follow-up
 - **Pain points**: Ghi trên giấy hay Excel offline thường bị mất, khó tìm kiếm
 
 ### Persona 2: Freelancer / Tư vấn viên
+
 - **Mô tả**: Cung cấp dịch vụ, 20-200 khách hàng
 - **Nhu cầu**: Quản lý thông tin liên hệ, lịch sử tương tác, pipeline deals
 - **Pain points**: Thiếu công cụ theo dõi khách hàng tiềm năng
 
 ### Persona 3: Sales SME
+
 - **Mô tả**: Nhân viên kinh doanh tại doanh nghiệp nhỏ
 - **Nhu cầu**: Danh sách khách hàng, công ty, theo dõi deals
 - **Pain points**: Boss yêu cầu dùng Sheets nhưng muốn giao diện CRM
@@ -93,6 +102,7 @@
   - Acceptance: Thay đổi trên Sheets phản ánh trong app (sau refresh)
 
 ### Nice-to-have (Post-MVP)
+
 - [ ] Deals/Pipeline management
 - [ ] Import/Export CSV
 - [ ] Email integration
@@ -265,21 +275,25 @@
 ### Google Sheets Structure
 
 **Sheet 1: `contacts`**
+
 | id | name | email | phone | company_id | source | notes | created_at | updated_at |
 |----|------|-------|-------|------------|--------|-------|------------|------------|
-| 1  | Nguyễn Văn A | a@email.com | 0912345678 | 1 | Facebook | VIP customer | 2024-01-01 | 2024-01-15 |
+| 1  | Nguyễn Văn A | <a@email.com> | 0912345678 | 1 | Facebook | VIP customer | 2024-01-01 | 2024-01-15 |
 
 **Sheet 2: `companies`**
+
 | id | name | industry | website | address | notes | created_at | updated_at |
 |----|------|----------|---------|---------|-------|------------|------------|
 | 1  | ABC Corp | Retail | abc.com | HCM | Key partner | 2024-01-01 | 2024-01-10 |
 
 **Sheet 3: `notes`**
+
 | id | contact_id | content | created_at |
 |----|------------|---------|------------|
 | 1  | 1 | Called to confirm order | 2024-01-15 10:30:00 |
 
 **Sheet 4: `reminders`**
+
 | id | contact_id | title | due_date | is_done | created_at |
 |----|------------|-------|----------|---------|------------|
 | 1  | 1 | Follow up quotation | 2024-01-20 | FALSE | 2024-01-15 |
@@ -291,15 +305,15 @@
 ### System Diagram
 
 ```
-┌─────────────────┐      HTTPS       ┌─────────────────────┐
-│                 │ ───────────────► │                     │
-│   Vite + React  │                  │  Cloudflare Workers │
-│   (Frontend)    │ ◄─────────────── │     (Backend API)   │
-│                 │   JSON + Cookie  │                     │
-└─────────────────┘                  └─────────────────────┘
-        │                                     │
-        │ OAuth 2.0 Login                     │ Google Sheets API
-        ▼                                     │ (User's OAuth token)
+┌──────────────┐      HTTPS       ┌──────────────────────────────┐
+│              │ ───────────────► │     Cloudflare Workers       │
+│   Browser    │                  │  ┌────────────────────────┐  │
+│              │ ◄─────────────── │  │ Static Assets (React)  │  │
+│              │   HTML/JS/CSS    │  │ API Endpoints          │  │
+└──────────────┘   JSON + Cookie  │  └────────────────────────┘  │
+        │                         └──────────────────────────────┘
+        │ OAuth 2.0 Login                     │
+        ▼                                     │ Google Sheets API
 ┌─────────────────┐                           ▼
 │                 │                  ┌─────────────────────┐
 │ Google OAuth    │                  │                     │
@@ -316,18 +330,11 @@
                     │      Cloudflare Network     │
 ┌──────────┐        │  ┌───────────────────────┐  │        ┌─────────────┐
 │          │        │  │                       │  │        │             │
-│  Browser │───────►│  │  Cloudflare Pages     │──│───────►│   Google    │
-│          │        │  │  (Static Frontend)    │  │        │   Sheets    │
+│  Browser │───────►│  │  Cloudflare Workers   │──│───────►│   Google    │
+│          │        │  │  (API + Static Assets) │  │        │   Sheets    │
 │          │◄───────│  │                       │  │◄───────│   API       │
-└──────────┘        │  └───────────────────────┘  │        │             │
-                    │            │                │        └─────────────┘
-                    │            │ SPA routing    │
-                    │            ▼                │
-                    │  ┌───────────────────────┐  │
-                    │  │                       │  │
-                    │  │  Cloudflare Workers   │  │
-                    │  │  (API endpoints)      │  │
-                    │  │                       │  │
+└──────────┘        │  │  /api/* → API handler │  │        │             │
+                    │  │  /*     → frontend    │  │        └─────────────┘
                     │  └───────────────────────┘  │
                     │                             │
                     └─────────────────────────────┘
@@ -348,6 +355,7 @@
 ## 9. API Design
 
 ### Base URL
+
 ```
 https://api.minicrm.workers.dev/api/v1
 ```
@@ -421,6 +429,7 @@ interface Reminder {
 ## 10. UI/UX Guidelines
 
 ### Color Scheme
+
 ```
 Primary:    #3B82F6 (Blue-500) - Actions, links
 Secondary:  #10B981 (Emerald-500) - Success states
@@ -432,12 +441,14 @@ Border:     #E5E7EB (Gray-200) - Borders
 ```
 
 ### Typography
+
 - **Font Family**: Inter (Google Fonts)
 - **Headings**: Bold, Gray-900
 - **Body**: Regular, Gray-700
 - **Sizes**: 14px base, 16px for inputs
 
 ### Design Principles
+
 1. **Clean & Minimal**: Không clutter, focus vào content
 2. **Vietnamese-friendly**: Hỗ trợ dấu, tên Việt Nam dài
 3. **Mobile-first thinking**: Responsive từ 320px
@@ -445,6 +456,7 @@ Border:     #E5E7EB (Gray-200) - Borders
 5. **Clear CTAs**: Buttons rõ ràng, dễ tap
 
 ### Component Library
+
 - Custom components built with Tailwind
 - Focus on reusability
 - Accessible (ARIA labels, keyboard nav)
@@ -456,11 +468,13 @@ Border:     #E5E7EB (Gray-200) - Borders
 **Spreadsheet Name**: `SheetCRM Data` (auto-created per user in their Google Drive)
 
 ### Limitations to Consider
+
 - **Cell limit**: 10 million cells max
 - **Performance**: Optimal up to ~5,000 rows per sheet
 - **API quota**: 300 read requests/min, 60 write requests/min
 
 ### Best Practices
+
 - Batch updates when possible
 - Implement client-side caching
 - Use pagination for large lists
@@ -471,6 +485,7 @@ Border:     #E5E7EB (Gray-200) - Borders
 ## 12. Security Considerations
 
 ### Authentication Flow (OAuth 2.0)
+
 1. User clicks "Sign in with Google" → redirected to Google consent screen
 2. User grants permission to access Google Sheets + Drive (app files only)
 3. Backend exchanges auth code for access + refresh tokens
@@ -481,6 +496,7 @@ Border:     #E5E7EB (Gray-200) - Borders
 8. All data endpoints return 401 if not authenticated
 
 ### Data Protection
+
 - No user credentials stored on server
 - Tokens encrypted in HttpOnly, Secure, SameSite cookies
 - HTTPS only
@@ -488,6 +504,7 @@ Border:     #E5E7EB (Gray-200) - Borders
 - Rate limiting on API
 
 ### Privacy
+
 - Data stays in user's Google Drive
 - No third-party data storage
 - User maintains full data ownership

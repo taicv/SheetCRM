@@ -55,21 +55,18 @@ GOOGLE_CLIENT_SECRET=your-client-secret
 COOKIE_SECRET=any-random-string-at-least-32-characters-long
 ```
 
-### 4. Run Development Servers
+### 4. Run Development Server
 
-**Terminal 1 - Backend:**
 ```bash
-cd backend
-pnpm wrangler dev
-# API runs at http://localhost:8787
+# Build frontend first
+cd frontend && pnpm build
+
+# Start dev server (serves both API + frontend)
+cd ../backend && pnpm wrangler dev
+# App runs at http://localhost:8787
 ```
 
-**Terminal 2 - Frontend:**
-```bash
-cd frontend
-pnpm dev
-# App runs at http://localhost:5173
-```
+> **Note:** Wrangler serves the built frontend from `frontend/dist/`. Rebuild the frontend after making UI changes.
 
 ## 🔧 Tech Stack
 
@@ -102,30 +99,28 @@ pnpm dev
 
 ## 🚢 Deployment
 
-### Frontend (Cloudflare Pages)
-```bash
-cd frontend
-pnpm build
-# Deploy dist/ folder to Cloudflare Pages
-```
+The app is deployed as a single Cloudflare Worker (serves both API and frontend static assets).
 
-### Backend (Cloudflare Workers)
 ```bash
-cd backend
-pnpm wrangler deploy
+# Build frontend first
+cd frontend && pnpm build
 
-# Set secrets for production
+# Deploy (API + frontend assets)
+cd ../backend && pnpm wrangler deploy
+
+# Set secrets for production (first time only)
 pnpm wrangler secret put GOOGLE_CLIENT_ID
 pnpm wrangler secret put GOOGLE_CLIENT_SECRET
 pnpm wrangler secret put COOKIE_SECRET
 ```
 
 > **Note:** Update the OAuth redirect URI in Google Cloud Console to match your production URL:
-> `https://your-worker.workers.dev/api/v1/auth/callback`
+> `https://sheetcrm.<your-subdomain>.workers.dev/api/v1/auth/callback`
 
 ## 📝 API Endpoints
 
 ### Auth (public)
+
 | Endpoint | Method | Description |
 |----------|--------|-------------|
 | `/api/v1/auth/login` | GET | Redirect to Google OAuth |
@@ -134,6 +129,7 @@ pnpm wrangler secret put COOKIE_SECRET
 | `/api/v1/auth/logout` | POST | Sign out |
 
 ### Data (authenticated)
+
 | Endpoint | Method | Description |
 |----------|--------|-------------|
 | `/api/v1/contacts` | GET, POST | List/Create contacts |

@@ -12,18 +12,20 @@ Before testing, you need to create Google OAuth 2.0 credentials:
 6. Authorized redirect URIs: `http://localhost:8787/api/v1/auth/callback`
 7. Copy the **Client ID** and **Client Secret**
 8. Create `backend/.dev.vars` (copy from `.dev.vars.example`):
+
    ```
    GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
    GOOGLE_CLIENT_SECRET=your-client-secret
    COOKIE_SECRET=any-random-string-at-least-32-characters-long
    ```
+
 9. Also configure the **OAuth consent screen** (add your email as test user)
 
 ## Test Cases
 
 | # | Test | Steps | Expected | Status |
 |---|------|-------|----------|--------|
-| TC-01 | Login Page Display | Start frontend + backend, open `http://localhost:5173` | See login page with gradient background, SheetCRM logo, "Sign in with Google" button | ✅ |
+| TC-01 | Login Page Display | Start frontend + backend, open `http://localhost:8787` | See login page with gradient background, SheetCRM logo, "Sign in with Google" button | ✅ |
 | TC-02 | OAuth Login Flow | Click "Sign in with Google" | Redirects to Google consent screen (incl. Sheets + Drive scope), after approval redirects back to dashboard | ✅ |
 | TC-03 | Spreadsheet Auto-Creation | After first login, check Google Drive | A new "SheetCRM Data" spreadsheet is created with 4 tabs (contacts, companies, notes, reminders) + headers | ✅ |
 | TC-04 | Session Persistence | After login, refresh the page | Still logged in, dashboard loads | ✅ |
@@ -37,11 +39,11 @@ Before testing, you need to create Google OAuth 2.0 credentials:
 ## How to Run
 
 ```bash
-# Terminal 1 - Backend
-cd backend && pnpm wrangler dev
+# Build frontend first
+cd frontend && pnpm build
 
-# Terminal 2 - Frontend  
-cd frontend && pnpm dev
+# Start dev server (API + frontend)
+cd ../backend && pnpm wrangler dev
 ```
 
-Open `http://localhost:5173` in your browser.
+Open `http://localhost:8787` in your browser.

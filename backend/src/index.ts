@@ -22,21 +22,13 @@ interface Env {
     GOOGLE_CLIENT_ID: string;
     GOOGLE_CLIENT_SECRET: string;
     COOKIE_SECRET: string;
-    FRONTEND_URL?: string; // Optional: for production redirect
 }
 
-// Dynamic CORS headers — whitelist allowed origins
-function getCorsHeaders(request: Request, env: Env): Record<string, string> {
+// CORS headers — same-origin since frontend is served by wrangler
+function getCorsHeaders(request: Request): Record<string, string> {
     const origin = request.headers.get('Origin');
-    const allowedOrigins = [
-        env.FRONTEND_URL || '',
-        'http://localhost:5173',
-        'http://localhost:8787',
-    ].filter(Boolean);
-
-    const allowedOrigin = origin && allowedOrigins.includes(origin)
-        ? origin
-        : allowedOrigins[0] || 'http://localhost:5173';
+    const url = new URL(request.url);
+    const allowedOrigin = origin === url.origin ? origin : url.origin;
 
     return {
         'Access-Control-Allow-Origin': allowedOrigin,
@@ -124,14 +116,9 @@ function getRedirectUri(request: Request): string {
     return `${url.origin}/api/v1/auth/callback`;
 }
 
-// Get the frontend URL for post-auth redirects
-function getFrontendUrl(request: Request, env: Env): string {
-    if (env.FRONTEND_URL) return env.FRONTEND_URL;
-    // In dev, frontend runs on a different port
+// Get the frontend URL for post-auth redirects (same origin)
+function getFrontendUrl(request: Request): string {
     const url = new URL(request.url);
-    if (url.hostname === 'localhost' || url.hostname === '127.0.0.1') {
-        return `${url.protocol}//localhost:5173`;
-    }
     return url.origin;
 }
 
@@ -259,7 +246,7 @@ router.add('GET', '/api/v1/auth/callback', async (request, _, __, env) => {
     const error = url.searchParams.get('error');
 
     if (error) {
-        const frontendUrl = getFrontendUrl(request, env);
+        const frontendUrl = getFrontendUrl(request);
         return new Response(null, {
             status: 302,
             headers: {
@@ -307,7 +294,7 @@ router.add('GET', '/api/v1/auth/callback', async (request, _, __, env) => {
 
         // Encrypt session into cookie
         const encryptedSession = await encryptSession(session, env.COOKIE_SECRET);
-        const frontendUrl = getFrontendUrl(request, env);
+        const frontendUrl = getFrontendUrl(request);
 
         // Set session cookie + clear the oauth_state cookie
         const headers = new Headers();
@@ -530,7 +517,7 @@ router.add('GET', '/api/v1/health', async () => {
 
 export default {
     async fetch(request: Request, env: Env): Promise<Response> {
-        const corsHeaders = getCorsHeaders(request, env);
+        const corsHeaders = getCorsHeaders(request);
 
         // Handle CORS preflight
         if (request.method === 'OPTIONS') {
@@ -547,9 +534,6 @@ export default {
                 const origin = request.headers.get('Origin');
                 const referer = request.headers.get('Referer');
                 const allowedOrigins = [
-                    env.FRONTEND_URL || '',
-                    'http://localhost:5173',
-                    'http://localhost:8787',
                     url.origin,
                 ].filter(Boolean);
 
