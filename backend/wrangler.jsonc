@@ -4,5 +4,8 @@
     "main": "src/index.ts",
     "assets": {
         "directory": "../frontend/dist"
+    },
+    "dev": {
+        "ip": "localhost"
     }
 }
