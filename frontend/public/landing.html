@@ -109,6 +109,100 @@
       -ms-overflow-style: none;
       scrollbar-width: none;
     }
+
+    /* Screenshot Slider */
+    .slider-container {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .slider-track {
+      display: flex;
+      transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .slider-slide {
+      max-width: 100%;
+      flex-shrink: 0;
+      aspect-ratio: 16 / 9;
+      overflow: hidden;
+    }
+
+    .slider-slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      display: block;
+    }
+
+    .slider-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 10;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      color: #374151;
+    }
+
+    .slider-btn:hover {
+      background: #fff;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+      transform: translateY(-50%) scale(1.05);
+    }
+
+    .slider-btn-prev {
+      left: 12px;
+    }
+
+    .slider-btn-next {
+      right: 12px;
+    }
+
+    .slider-dots {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      padding: 16px 0 8px;
+    }
+
+    .slider-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #d1d5db;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      padding: 0;
+    }
+
+    .slider-dot.active {
+      background: #3B82F6;
+      transform: scale(1.2);
+    }
+
+    .slider-dot:hover:not(.active) {
+      background: #9ca3af;
+    }
+
+    .slider-counter {
+      text-align: center;
+      font-size: 0.875rem;
+      color: #6b7280;
+      padding-bottom: 4px;
+    }
   </style>
 </head>
 
@@ -283,13 +377,43 @@
           </div>
         </div>
 
-        <!-- Demo Image Placeholder -->
+        <!-- Screenshot Slider -->
         <div class="bg-white border-x border-b border-gray-200 rounded-b-xl overflow-hidden shadow-2xl">
-          <img src="Screenshot.png" alt="Dashboard SheetCRM với thống kê trực quan" class="w-full h-auto" />
+          <div class="slider-container" id="screenshot-slider">
+            <div class="slider-track" id="slider-track">
+              <div class="slider-slide"><img src="Screenshot-1.png" alt="SheetCRM Dashboard - Tổng quan"
+                  loading="lazy" /></div>
+              <div class="slider-slide"><img src="Screenshot-2.png" alt="SheetCRM Quản lý liên hệ" loading="lazy" />
+              </div>
+              <div class="slider-slide"><img src="Screenshot-3.png" alt="SheetCRM Quản lý công ty" loading="lazy" />
+              </div>
+              <div class="slider-slide"><img src="Screenshot-4.png" alt="SheetCRM Ghi chú & Hoạt động" loading="lazy" />
+              </div>
+              <div class="slider-slide"><img src="Screenshot-5.png" alt="SheetCRM Nhắc nhở" loading="lazy" /></div>
+              <div class="slider-slide"><img src="Screenshot-6.png" alt="SheetCRM Deals" loading="lazy" /></div>
+              <div class="slider-slide"><img src="Screenshot-7.png" alt="SheetCRM Hồ sơ" loading="lazy" /></div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <button class="slider-btn slider-btn-prev" id="slider-prev" aria-label="Ảnh trước">
+              <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <button class="slider-btn slider-btn-next" id="slider-next" aria-label="Ảnh tiếp">
+              <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+
+          <!-- Dots & Counter -->
+          <div class="slider-dots" id="slider-dots"></div>
+          <div class="slider-counter" id="slider-counter"></div>
         </div>
 
         <!-- Floating Feature Cards -->
-        <div
+        <!--div
           class="hidden lg:block absolute -left-8 top-1/4 bg-white rounded-lg shadow-xl p-4 border border-gray-200 max-w-xs">
           <div class="flex items-start">
             <svg class="w-6 h-6 text-green-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"
@@ -303,9 +427,9 @@
               <p class="text-sm text-gray-600">Thay đổi trên web hoặc Sheets đều được cập nhật ngay</p>
             </div>
           </div>
-        </div>
+        </div-->
 
-        <div
+        <!--div
           class="hidden lg:block absolute -right-8 top-1/2 bg-white rounded-lg shadow-xl p-4 border border-gray-200 max-w-xs">
           <div class="flex items-start">
             <svg class="w-6 h-6 text-blue-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"
@@ -319,7 +443,7 @@
               <p class="text-sm text-gray-600">Dữ liệu lưu trong Google Drive của bạn, không qua server bên thứ 3</p>
             </div>
           </div>
-        </div>
+        </div-->
       </div>
     </div>
   </section>
@@ -1025,6 +1149,90 @@
         }
       });
     });
+
+    // Screenshot Slider
+    (function () {
+      const track = document.getElementById('slider-track');
+      const slides = track.querySelectorAll('.slider-slide');
+      const prevBtn = document.getElementById('slider-prev');
+      const nextBtn = document.getElementById('slider-next');
+      const dotsContainer = document.getElementById('slider-dots');
+      const counter = document.getElementById('slider-counter');
+      const totalSlides = slides.length;
+      let currentIndex = 0;
+      let autoPlayInterval;
+
+      // Create dots
+      for (let i = 0; i < totalSlides; i++) {
+        const dot = document.createElement('button');
+        dot.classList.add('slider-dot');
+        if (i === 0) dot.classList.add('active');
+        dot.setAttribute('aria-label', `Ảnh ${i + 1}`);
+        dot.addEventListener('click', () => goTo(i));
+        dotsContainer.appendChild(dot);
+      }
+
+      function updateSlider() {
+        track.style.transform = `translateX(-${currentIndex * 100}%)`;
+        // Update dots
+        dotsContainer.querySelectorAll('.slider-dot').forEach((dot, i) => {
+          dot.classList.toggle('active', i === currentIndex);
+        });
+        // Update counter
+        counter.textContent = `${currentIndex + 1} / ${totalSlides}`;
+      }
+
+      function goTo(index) {
+        currentIndex = (index + totalSlides) % totalSlides;
+        updateSlider();
+      }
+
+      function next() { goTo(currentIndex + 1); }
+      function prev() { goTo(currentIndex - 1); }
+
+      prevBtn.addEventListener('click', () => { prev(); resetAutoPlay(); });
+      nextBtn.addEventListener('click', () => { next(); resetAutoPlay(); });
+
+      // Auto-play
+      function startAutoPlay() {
+        autoPlayInterval = setInterval(next, 4000);
+      }
+      function stopAutoPlay() {
+        clearInterval(autoPlayInterval);
+      }
+      function resetAutoPlay() {
+        stopAutoPlay();
+        startAutoPlay();
+      }
+
+      // Pause on hover
+      const slider = document.getElementById('screenshot-slider');
+      slider.addEventListener('mouseenter', stopAutoPlay);
+      slider.addEventListener('mouseleave', startAutoPlay);
+
+      // Keyboard navigation
+      slider.setAttribute('tabindex', '0');
+      slider.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') { prev(); resetAutoPlay(); }
+        if (e.key === 'ArrowRight') { next(); resetAutoPlay(); }
+      });
+
+      // Touch/swipe support
+      let touchStartX = 0;
+      let touchEndX = 0;
+      slider.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; }, { passive: true });
+      slider.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        const diff = touchStartX - touchEndX;
+        if (Math.abs(diff) > 50) {
+          diff > 0 ? next() : prev();
+          resetAutoPlay();
+        }
+      });
+
+      updateSlider();
+      startAutoPlay();
+    })();
   </script>
 
 </body>

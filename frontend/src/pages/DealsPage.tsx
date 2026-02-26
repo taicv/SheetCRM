@@ -180,7 +180,7 @@ export function DealsPage() {
                                                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 truncate max-w-xs">{deal.notes}</p>
                                                 )}
                                             </td>
-                                            <td className="px-4 py-3 text-sm font-semibold text-gray-900 dark:text-gray-100">
+                                            <td className="px-4 py-3 text-sm font-semibold text-gray-900 dark:text-gray-100 whitespace-nowrap">
                                                 {formatCurrency(deal.value)}
                                             </td>
                                             <td className="px-4 py-3 whitespace-nowrap">
