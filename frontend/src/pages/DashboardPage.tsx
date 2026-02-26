@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import type { DashboardStats, Contact, Reminder } from '@/types';
-import { contactsApi, companiesApi, remindersApi } from '@/services/api';
+import { contactsApi, companiesApi, remindersApi, dealsApi } from '@/services/api';
 
 export function DashboardPage() {
     const [stats, setStats] = useState<DashboardStats | null>(null);
@@ -23,10 +23,11 @@ export function DashboardPage() {
             setLoading(true);
             setError(null);
 
-            const [contacts, companies, reminders] = await Promise.all([
+            const [contacts, companies, reminders, deals] = await Promise.all([
                 contactsApi.getAll(),
                 companiesApi.getAll(),
                 remindersApi.getAll(),
+                dealsApi.getAll(),
             ]);
 
             // Get recent contacts (last 5)
@@ -48,6 +49,7 @@ export function DashboardPage() {
             setStats({
                 totalContacts: contacts.length,
                 totalCompanies: companies.length,
+                totalDeals: deals.length,
                 upcomingReminders: reminders.filter(r => !r.is_done).length,
                 recentActivities: [],
             });
@@ -88,7 +90,7 @@ export function DashboardPage() {
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Tổng quan</h1>
 
             {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <StatCard
                     icon="👥"
                     label="Liên hệ"
@@ -100,6 +102,12 @@ export function DashboardPage() {
                     label="Công ty"
                     value={stats?.totalCompanies || 0}
                     color="emerald"
+                />
+                <StatCard
+                    icon="💰"
+                    label="Deals"
+                    value={stats?.totalDeals || 0}
+                    color="purple"
                 />
                 <StatCard
                     icon="⏰"
@@ -176,12 +184,13 @@ function StatCard({
     icon: string;
     label: string;
     value: number;
-    color: 'blue' | 'emerald' | 'amber'
+    color: 'blue' | 'emerald' | 'amber' | 'purple'
 }) {
     const colorClasses = {
         blue: 'bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400',
         emerald: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400',
         amber: 'bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400',
+        purple: 'bg-purple-50 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400',
     };
 
     return (

@@ -6,6 +6,7 @@ const navItems = [
     { to: '/contacts', label: 'Liên hệ', icon: '👥' },
     { to: '/companies', label: 'Công ty', icon: '🏢' },
     { to: '/reminders', label: 'Nhắc nhở', icon: '⏰' },
+    { to: '/deals', label: 'Deals', icon: '💰' },
     { to: '/profile', label: 'Hồ sơ', icon: '👤' },
 ];
 

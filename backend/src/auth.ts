@@ -21,6 +21,7 @@ const SHEET_SCHEMAS: Record<string, string[]> = {
     companies: ['id', 'name', 'industry', 'website', 'address', 'notes', 'created_at', 'updated_at'],
     notes: ['id', 'contact_id', 'content', 'created_at'],
     reminders: ['id', 'contact_id', 'title', 'due_date', 'is_done', 'created_at'],
+    deals: ['id', 'title', 'value', 'stage', 'contact_id', 'company_id', 'expected_close_date', 'notes', 'created_at', 'updated_at'],
 };
 
 interface OAuthTokens {
