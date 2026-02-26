@@ -22,6 +22,7 @@ interface Env {
     GOOGLE_CLIENT_ID: string;
     GOOGLE_CLIENT_SECRET: string;
     COOKIE_SECRET: string;
+    ASSETS: { fetch: (request: Request) => Promise<Response> };
 }
 
 // CORS headers — same-origin since frontend is served by wrangler
@@ -558,6 +559,12 @@ export default {
                 if (!requestOrigin || !allowedOrigins.includes(requestOrigin)) {
                     return errorResponse('Forbidden: invalid request origin', 403);
                 }
+            }
+
+            // Only handle /api/ routes in the Worker; let all other paths
+            // fall through to the Wrangler assets handler (SPA fallback).
+            if (!path.startsWith('/api/')) {
+                return env.ASSETS.fetch(request);
             }
 
             const match = router.match(method, path);

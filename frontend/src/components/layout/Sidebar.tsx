@@ -20,7 +20,7 @@ export function Sidebar() {
                     <span className="text-2xl">🏢</span>
                     SheetCRM
                 </h1>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Phiên bản Google Sheets</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Google Sheets CRM</p>
             </div>
 
             {/* Navigation */}
