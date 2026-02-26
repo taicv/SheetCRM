@@ -1,6 +1,53 @@
-# SheetCRM - Google Sheets CRM
+# SheetCRM — Lightweight CRM powered by Google Sheets
 
-A lightweight CRM using Google Sheets as database, built for small businesses and freelancers.
+A modern, lightweight CRM that uses **Google Sheets as its database**. Built for small businesses and freelancers who want a professional CRM interface without the complexity or cost.
+
+> **🌐 Live Demo:** [sheetcrm.taicv.workers.dev](https://sheetcrm.taicv.workers.dev/)
+
+---
+
+## ✨ Why SheetCRM?
+
+- **Zero database cost** — your data lives in Google Sheets on your own Google Drive
+- **Dual-mode editing** — use the web app _or_ edit the spreadsheet directly
+- **Per-user data** — each user gets their own auto-created spreadsheet
+- **Privacy-first** — no third-party data storage; you own your data
+
+---
+
+## 📋 Features
+
+| Feature | Description |
+|---------|-------------|
+| 🔐 Google OAuth 2.0 | Sign in with Google, auto-provision spreadsheet |
+| 👥 Contacts | Full CRUD with search and company linking |
+| 🏢 Companies | Full CRUD with linked contacts view |
+| 📝 Notes / Activities | Timeline of interactions per contact |
+| ⏰ Reminders | Follow-up reminders with due dates |
+| 📊 Dashboard | At-a-glance stats and recent activity |
+| 🌙 Dark Mode | System preference detection + manual toggle |
+| 🔔 Toast Notifications | Non-intrusive feedback for every action |
+| 👤 User Profile | Account info, stats, and link to your Google Sheet |
+| 📈 Analytics | Optional PostHog integration |
+
+---
+
+## 🏗️ Architecture
+
+```
+Browser ──HTTPS──▶ Cloudflare Worker ──Google Sheets API──▶ Google Sheets
+                   (API + static assets)                    (per-user DB)
+```
+
+| Layer | Technology |
+|-------|------------|
+| Frontend | Vite + React 18 + TypeScript + Tailwind CSS |
+| Backend | Cloudflare Workers |
+| Database | Google Sheets API v4 |
+| Auth | Google OAuth 2.0 |
+| Analytics | PostHog _(optional)_ |
+
+---
 
 ## 📁 Project Structure
 
@@ -8,73 +55,79 @@ A lightweight CRM using Google Sheets as database, built for small businesses an
 SheetCRM/
 ├── frontend/           # React + Vite + TypeScript + Tailwind
 │   ├── src/
-│   │   ├── components/ # Layout components (Header, Sidebar)
+│   │   ├── components/ # Layout (Header, Sidebar, Toast, etc.)
 │   │   ├── context/    # Auth context (OAuth state management)
-│   │   ├── pages/      # Page components (Dashboard, Contacts, etc.)
+│   │   ├── pages/      # Page components (Dashboard, Contacts, …)
 │   │   ├── services/   # API client
-│   │   └── types/      # TypeScript types
+│   │   └── types/      # TypeScript type definitions
 │   └── package.json
 ├── backend/            # Cloudflare Workers API
 │   ├── src/
 │   │   ├── auth.ts     # Google OAuth 2.0 + session cookies
-│   │   ├── sheets.ts   # Google Sheets CRUD client
+│   │   ├── sheets.ts   # Google Sheets CRUD operations
 │   │   └── index.ts    # API router + auth middleware
 │   └── wrangler.jsonc
-├── PRD.md              # Product Requirements
-├── IMPLEMENTATION_PLAN.md
-└── TEST_PLAN.md
+└── README.md
 ```
 
-## 🚀 Quick Start
+---
 
-### 1. Install Dependencies
+## 🚀 Getting Started
+
+### Prerequisites
+
+- **Node.js** ≥ 18
+- **pnpm** (recommended) or npm
+- A **Google Cloud** project with Sheets API enabled
+
+### 1. Clone & install
 
 ```bash
+git clone https://github.com/taicv/SheetCRM.git
+cd SheetCRM
+
+# Install dependencies
 cd frontend && pnpm install
 cd ../backend && pnpm install
 ```
 
-### 2. Setup Google OAuth 2.0 Credentials
+### 2. Set up Google OAuth 2.0
 
-1. Go to [Google Cloud Console](https://console.cloud.google.com/apis/credentials)
+1. Open [Google Cloud Console → Credentials](https://console.cloud.google.com/apis/credentials)
 2. Create or select a project
-3. Enable the **Google Sheets API** (APIs & Services → Library)
-4. Go to **Credentials** → **Create Credentials** → **OAuth 2.0 Client IDs**
-5. Application type: **Web application**
-6. Authorized redirect URIs: `http://localhost:8787/api/v1/auth/callback`
-7. Configure the **OAuth consent screen** (add your email as test user)
-8. Copy the **Client ID** and **Client Secret**
+3. Enable the **Google Sheets API** (**APIs & Services → Library**)
+4. Go to **Credentials → Create Credentials → OAuth 2.0 Client IDs**
+   - Application type: **Web application**
+   - Authorized redirect URI: `http://localhost:8787/api/v1/auth/callback`
+5. Configure the **OAuth consent screen** (add your email as a test user)
+6. Copy the **Client ID** and **Client Secret**
 
-### 3. Configure Backend Environment
+### 3. Configure environment variables
 
-Create `backend/.dev.vars` (copy from `.dev.vars.example`):
+Create `backend/.dev.vars` (see `.dev.vars.example`):
 
-```
+```env
 GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
 GOOGLE_CLIENT_SECRET=your-client-secret
 COOKIE_SECRET=any-random-string-at-least-32-characters-long
 ```
 
-### 4. (Optional) Configure PostHog Analytics
+_(Optional)_ Create `frontend/.env` for analytics (see `.env.example`):
 
-If you want to enable analytics tracking, create `frontend/.env` (copy from `.env.example`):
-
-```bash
-VITE_PUBLIC_POSTHOG_KEY=your-posthog-project-api-key
-VITE_PUBLIC_POSTHOG_HOST=https://app.posthog.com  # or your self-hosted URL
+```env
+VITE_PUBLIC_POSTHOG_KEY=your-posthog-api-key
+VITE_PUBLIC_POSTHOG_HOST=https://app.posthog.com
 ```
 
-Get your PostHog API key from [app.posthog.com](https://app.posthog.com). Analytics will be automatically disabled if these variables are not set.
-
-### 5. Run Development Server
+### 4. Run the dev server
 
 ```bash
 # Build frontend first
 cd frontend && pnpm build
 
-# Start dev server (serves both API + frontend)
+# Start dev server (serves API + frontend)
 cd ../backend && pnpm wrangler dev
-# App runs at http://localhost:8787
+# → http://localhost:8787
 ```
 
 > **Note:** Wrangler serves the built frontend from `frontend/dist/`. Rebuild the frontend after making UI changes.
@@ -117,59 +170,94 @@ cd ../backend && pnpm wrangler dev
 
 ## 🚢 Deployment
 
-The app is deployed as a single Cloudflare Worker (serves both API and frontend static assets).
+The app deploys as a **single Cloudflare Worker** (API + static frontend assets).
 
-### Prerequisites
+### 1. Configure Cloudflare
 
-1. Configure `backend/.env` (copy from `.env.example`):
-   ```bash
-   CLOUDFLARE_API_TOKEN=your-cloudflare-api-token
-   ```
-   Get your API token from [Cloudflare Dashboard](https://dash.cloudflare.com/profile/api-tokens) → Create Token → Edit Cloudflare Workers
+Create `backend/.env` (see `.env.example`):
 
-2. Set environment variables in frontend (optional):
-   - PostHog analytics will be bundled into the frontend during build
-   - Make sure `frontend/.env` is configured if you want analytics in production
+```env
+CLOUDFLARE_API_TOKEN=your-cloudflare-api-token
+```
 
-### Deploy
+Get a token from [Cloudflare Dashboard → API Tokens](https://dash.cloudflare.com/profile/api-tokens) → **Create Token** → **Edit Cloudflare Workers**.
+
+### 2. Deploy
 
 ```bash
-# Build frontend first
+# Build frontend
 cd frontend && pnpm build
 
-# Deploy (API + frontend assets)
+# Deploy to Cloudflare
 cd ../backend && pnpm wrangler deploy
 
-# Set secrets for production (first time only)
+# Set production secrets (first time only)
 pnpm wrangler secret put GOOGLE_CLIENT_ID
 pnpm wrangler secret put GOOGLE_CLIENT_SECRET
 pnpm wrangler secret put COOKIE_SECRET
 ```
 
-> **Note:** Update the OAuth redirect URI in Google Cloud Console to match your production URL:
+> **Important:** Update the OAuth redirect URI in Google Cloud Console to match your production URL:
 > `https://sheetcrm.<your-subdomain>.workers.dev/api/v1/auth/callback`
+
+---
+
+## 🔐 Authentication Flow
+
+```
+1. User clicks "Sign in with Google"
+2. → Redirect to Google OAuth consent screen
+3. → User grants Sheets + Drive access
+4. ← Backend exchanges auth code for tokens
+5.    Backend finds or creates "SheetCRM Data" spreadsheet
+6.    Session stored in AES-GCM encrypted HttpOnly cookie
+7. ← All API calls authenticated via cookie (auto-refresh on expiry)
+```
+
+---
+
+## 📝 API Reference
+
+### Auth _(public)_
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/api/v1/auth/login` | Redirect to Google OAuth |
+| `GET` | `/api/v1/auth/callback` | OAuth callback handler |
+| `GET` | `/api/v1/auth/status` | Check auth status |
+| `POST` | `/api/v1/auth/logout` | Sign out |
+
+### Data _(authenticated)_
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET / POST` | `/api/v1/contacts` | List / Create contacts |
+| `GET / PUT / DELETE` | `/api/v1/contacts/:id` | Read / Update / Delete contact |
+| `GET / POST` | `/api/v1/companies` | List / Create companies |
+| `GET / PUT / DELETE` | `/api/v1/companies/:id` | Read / Update / Delete company |
+| `GET / POST` | `/api/v1/contacts/:id/notes` | List / Add contact notes |
+| `GET / POST` | `/api/v1/reminders` | List / Create reminders |
+| `PUT / DELETE` | `/api/v1/reminders/:id` | Update / Delete reminder |
+| `GET` | `/api/v1/dashboard/stats` | Dashboard statistics |
+
+---
 
 ## 🧪 Testing
 
-### E2E Tests (Playwright)
-
-The project includes Playwright for end-to-end testing:
+### E2E (Playwright)
 
 ```bash
-# Install Playwright browsers (first time only)
+# Install browsers (first time)
 cd frontend && pnpm exec playwright install
 
 # Run tests
 pnpm exec playwright test
 
-# Run tests with UI
+# Interactive UI mode
 pnpm exec playwright test --ui
-
-# Run tests in headed mode
-pnpm exec playwright test --headed
 ```
 
-**Note:** Make sure the development server is running before executing tests.
+> Make sure the dev server is running before executing tests.
 
 ## 📝 API Endpoints
 
