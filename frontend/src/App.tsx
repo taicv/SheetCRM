@@ -30,7 +30,7 @@ function AppRoutes() {
         return (
             <div className="loading-screen">
                 <div className="loading-spinner" />
-                <p>Loading...</p>
+                <p>Đang tải...</p>
             </div>
         );
     }

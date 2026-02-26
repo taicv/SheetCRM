@@ -2,10 +2,10 @@ import { NavLink } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
 const navItems = [
-    { to: '/', label: 'Dashboard', icon: '📊' },
-    { to: '/contacts', label: 'Contacts', icon: '👥' },
-    { to: '/companies', label: 'Companies', icon: '🏢' },
-    { to: '/reminders', label: 'Reminders', icon: '⏰' },
+    { to: '/', label: 'Tổng quan', icon: '📊' },
+    { to: '/contacts', label: 'Liên hệ', icon: '👥' },
+    { to: '/companies', label: 'Công ty', icon: '🏢' },
+    { to: '/reminders', label: 'Nhắc nhở', icon: '⏰' },
     { to: '/profile', label: 'Hồ sơ', icon: '👤' },
 ];
 
@@ -20,7 +20,7 @@ export function Sidebar() {
                     <span className="text-2xl">🏢</span>
                     SheetCRM
                 </h1>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Google Sheets Edition</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Phiên bản Google Sheets</p>
             </div>
 
             {/* Navigation */}
@@ -55,7 +55,7 @@ export function Sidebar() {
                         className="flex items-center gap-2 px-4 py-2 text-sm text-gray-600 hover:text-primary-600 transition-colors dark:text-gray-400 dark:hover:text-primary-400"
                     >
                         <span>📄</span>
-                        <span>Open Google Sheet</span>
+                        <span>Mở Google Sheet</span>
                     </a>
                 </div>
             )}

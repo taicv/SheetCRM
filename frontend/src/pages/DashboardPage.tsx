@@ -52,7 +52,7 @@ export function DashboardPage() {
                 recentActivities: [],
             });
         } catch (err) {
-            setError(err instanceof Error ? err.message : 'Failed to load dashboard');
+            setError(err instanceof Error ? err.message : 'Không thể tải dữ liệu');
         } finally {
             setLoading(false);
         }
@@ -85,25 +85,25 @@ export function DashboardPage() {
 
     return (
         <div className="space-y-6">
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Tổng quan</h1>
 
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <StatCard
                     icon="👥"
-                    label="Contacts"
+                    label="Liên hệ"
                     value={stats?.totalContacts || 0}
                     color="blue"
                 />
                 <StatCard
                     icon="🏢"
-                    label="Companies"
+                    label="Công ty"
                     value={stats?.totalCompanies || 0}
                     color="emerald"
                 />
                 <StatCard
                     icon="⏰"
-                    label="Reminders"
+                    label="Nhắc nhở"
                     value={stats?.upcomingReminders || 0}
                     color="amber"
                 />
@@ -114,10 +114,10 @@ export function DashboardPage() {
                 {/* Recent Contacts */}
                 <div className="card p-6">
                     <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2 dark:text-white">
-                        <span>👤</span> Contacts mới
+                        <span>👤</span> Liên hệ mới
                     </h2>
                     {recentContacts.length === 0 ? (
-                        <p className="text-gray-500 dark:text-gray-400 text-center py-4">Chưa có contact nào</p>
+                        <p className="text-gray-500 dark:text-gray-400 text-center py-4">Chưa có liên hệ nào</p>
                     ) : (
                         <ul className="space-y-3">
                             {recentContacts.map((contact) => (
@@ -140,10 +140,10 @@ export function DashboardPage() {
                 {/* Upcoming Reminders */}
                 <div className="card p-6">
                     <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2 dark:text-white">
-                        <span>⏰</span> Reminders sắp tới
+                        <span>⏰</span> Nhắc nhở sắp tới
                     </h2>
                     {upcomingReminders.length === 0 ? (
-                        <p className="text-gray-500 dark:text-gray-400 text-center py-4">Không có reminders</p>
+                        <p className="text-gray-500 dark:text-gray-400 text-center py-4">Không có nhắc nhở</p>
                     ) : (
                         <ul className="space-y-3">
                             {upcomingReminders.map((reminder) => (
@@ -179,9 +179,9 @@ function StatCard({
     color: 'blue' | 'emerald' | 'amber'
 }) {
     const colorClasses = {
-        blue:    'bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400',
+        blue: 'bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400',
         emerald: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400',
-        amber:   'bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400',
+        amber: 'bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400',
     };
 
     return (

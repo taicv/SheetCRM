@@ -32,14 +32,14 @@ export function RemindersPage() {
             setReminders(remindersData);
             setContacts(contactsData);
         } catch (err) {
-            setError(err instanceof Error ? err.message : 'Failed to load reminders');
+            setError(err instanceof Error ? err.message : 'Không thể tải danh sách nhắc nhở');
         } finally {
             setLoading(false);
         }
     }
 
     const getContactName = (contactId: string) => {
-        return contacts.find(c => c.id === contactId)?.name || 'Unknown';
+        return contacts.find(c => c.id === contactId)?.name || 'Không rõ';
     };
 
     const filteredReminders = reminders
@@ -54,7 +54,7 @@ export function RemindersPage() {
         try {
             setSubmitting(true);
             await remindersApi.create(data);
-            toast.success('Đã thêm reminder!');
+            toast.success('Đã thêm nhắc nhở!');
             setShowModal(false);
             loadData();
         } catch (err) {
@@ -78,11 +78,11 @@ export function RemindersPage() {
     }
 
     async function handleDelete(id: string) {
-        if (!confirm('Bạn có chắc muốn xóa reminder này?')) return;
+        if (!confirm('Bạn có chắc muốn xóa nhắc nhở này?')) return;
         try {
             setDeletingId(id);
             await remindersApi.delete(id);
-            toast.success('Đã xóa reminder!');
+            toast.success('Đã xóa nhắc nhở!');
             loadData();
         } catch (err) {
             toast.error(err instanceof Error ? err.message : 'Xóa thất bại');
@@ -115,12 +115,12 @@ export function RemindersPage() {
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Reminders</h1>
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Nhắc nhở</h1>
                 <button
                     onClick={() => setShowModal(true)}
                     className="btn btn-primary"
                 >
-                    + Thêm Reminder
+                    + Thêm nhắc nhở
                 </button>
             </div>
 
@@ -131,8 +131,8 @@ export function RemindersPage() {
                         key={f}
                         onClick={() => setFilter(f)}
                         className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${filter === f
-                                ? 'bg-primary-500 text-white'
-                                : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600'
+                            ? 'bg-primary-500 text-white'
+                            : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600'
                             }`}
                     >
                         {f === 'upcoming' ? 'Sắp tới' : f === 'done' ? 'Hoàn thành' : 'Tất cả'}
@@ -144,7 +144,7 @@ export function RemindersPage() {
             <div className="space-y-3">
                 {filteredReminders.length === 0 ? (
                     <p className="text-gray-500 dark:text-gray-400 text-center py-8">
-                        {filter === 'done' ? 'Chưa có reminder hoàn thành' : 'Không có reminder'}
+                        {filter === 'done' ? 'Chưa có nhắc nhở hoàn thành' : 'Không có nhắc nhở'}
                     </p>
                 ) : (
                     filteredReminders.map((reminder) => (
@@ -157,8 +157,8 @@ export function RemindersPage() {
                                 onClick={() => handleToggleDone(reminder)}
                                 disabled={togglingId === reminder.id}
                                 className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all shrink-0 disabled:opacity-50 ${reminder.is_done
-                                        ? 'bg-emerald-500 border-emerald-500 text-white'
-                                        : 'border-gray-300 hover:border-primary-500'
+                                    ? 'bg-emerald-500 border-emerald-500 text-white'
+                                    : 'border-gray-300 hover:border-primary-500'
                                     }`}
                             >
                                 {togglingId === reminder.id ? (
@@ -239,17 +239,17 @@ function ReminderModal({
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
             <div className="bg-white dark:bg-gray-800 rounded-xl w-full max-w-lg mx-4">
                 <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-                    <h2 className="text-xl font-semibold">Thêm Reminder mới</h2>
+                    <h2 className="text-xl font-semibold">Thêm nhắc nhở mới</h2>
                 </div>
                 <form onSubmit={handleSubmit} className="p-6 space-y-4">
                     <div>
-                        <label className="label">Contact *</label>
+                        <label className="label">Liên hệ *</label>
                         <select
                             value={formData.contact_id}
                             onChange={e => setFormData({ ...formData, contact_id: e.target.value })}
                             className="input"
                         >
-                            <option value="">-- Chọn contact --</option>
+                            <option value="">-- Chọn liên hệ --</option>
                             {contacts.map(c => (
                                 <option key={c.id} value={c.id}>{c.name}</option>
                             ))}
@@ -262,7 +262,7 @@ function ReminderModal({
                             value={formData.title}
                             onChange={e => setFormData({ ...formData, title: e.target.value })}
                             className="input"
-                            placeholder="Follow up báo giá"
+                            placeholder="Theo dõi báo giá"
                         />
                     </div>
                     <div>
