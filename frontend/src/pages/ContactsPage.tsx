@@ -129,16 +129,14 @@ export function ContactsPage() {
                     <thead className="bg-gray-50 dark:bg-gray-700/50 border-b border-gray-200 dark:border-gray-700">
                         <tr>
                             <th className="text-left px-6 py-3 text-sm font-medium text-gray-500 dark:text-gray-400">Tên</th>
-                            <th className="text-left px-6 py-3 text-sm font-medium text-gray-500 dark:text-gray-400">Email</th>
-                            <th className="text-left px-6 py-3 text-sm font-medium text-gray-500 dark:text-gray-400">SĐT</th>
                             <th className="text-left px-6 py-3 text-sm font-medium text-gray-500 dark:text-gray-400">Công ty</th>
-                            <th className="text-left px-6 py-3 text-sm font-medium text-gray-500 dark:text-gray-400">Thao tác</th>
+                            <th className="text-right px-6 py-3 text-sm font-medium text-gray-500 dark:text-gray-400">Thao tác</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
                         {filteredContacts.length === 0 ? (
                             <tr>
-                                <td colSpan={5} className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
+                                <td colSpan={3} className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
                                     {search ? 'Không tìm thấy liên hệ' : 'Chưa có liên hệ nào'}
                                 </td>
                             </tr>
@@ -155,23 +153,23 @@ export function ContactsPage() {
                                             <span className="font-medium text-gray-900 dark:text-gray-100">{contact.name}</span>
                                         </div>
                                     </td>
-                                    <td className="px-6 py-4 text-gray-600 dark:text-gray-400">{contact.email || '-'}</td>
-                                    <td className="px-6 py-4 text-gray-600 dark:text-gray-400">{contact.phone || '-'}</td>
                                     <td className="px-6 py-4 text-gray-600 dark:text-gray-400">{getCompanyName(contact.company_id)}</td>
-                                    <td className="px-6 py-4">
-                                        <div className="flex gap-2">
+                                    <td className="px-6 py-4 text-right">
+                                        <div className="flex gap-1 justify-end">
                                             <button
                                                 onClick={() => { setEditingContact(contact); setShowModal(true); }}
-                                                className="text-sm text-primary-600 hover:text-primary-700"
+                                                className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                                                title="Sửa"
                                             >
-                                                Sửa
+                                                ✏️
                                             </button>
                                             <button
                                                 onClick={() => handleDelete(contact.id)}
                                                 disabled={deletingId === contact.id}
-                                                className="text-sm text-red-600 hover:text-red-700 disabled:opacity-50"
+                                                className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors disabled:opacity-50"
+                                                title="Xóa"
                                             >
-                                                {deletingId === contact.id ? 'Đang xóa...' : 'Xóa'}
+                                                {deletingId === contact.id ? '⏳' : '🗑️'}
                                             </button>
                                         </div>
                                     </td>

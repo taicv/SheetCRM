@@ -166,7 +166,6 @@ export function DealsPage() {
                                     <th className="px-4 py-3 text-left text-sm font-medium text-gray-600 dark:text-gray-300">Giai đoạn</th>
                                     <th className="px-4 py-3 text-left text-sm font-medium text-gray-600 dark:text-gray-300">Liên hệ</th>
                                     <th className="px-4 py-3 text-left text-sm font-medium text-gray-600 dark:text-gray-300">Công ty</th>
-                                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-600 dark:text-gray-300">Ngày chốt dự kiến</th>
                                     <th className="px-4 py-3 text-right text-sm font-medium text-gray-600 dark:text-gray-300">Thao tác</th>
                                 </tr>
                             </thead>
@@ -184,16 +183,13 @@ export function DealsPage() {
                                             <td className="px-4 py-3 text-sm font-semibold text-gray-900 dark:text-gray-100">
                                                 {formatCurrency(deal.value)}
                                             </td>
-                                            <td className="px-4 py-3">
-                                                <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${stageInfo.color}`}>
+                                            <td className="px-4 py-3 whitespace-nowrap">
+                                                <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ${stageInfo.color}`}>
                                                     {stageInfo.label}
                                                 </span>
                                             </td>
                                             <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{getContactName(deal.contact_id)}</td>
                                             <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{getCompanyName(deal.company_id)}</td>
-                                            <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
-                                                {deal.expected_close_date ? new Date(deal.expected_close_date).toLocaleDateString('vi-VN') : '—'}
-                                            </td>
                                             <td className="px-4 py-3 text-right">
                                                 <button
                                                     onClick={() => { setEditingDeal(deal); setShowModal(true); }}
