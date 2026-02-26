@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@posthog/react':
+        specifier: ^1.8.1
+        version: 1.8.1(@types/react@18.3.27)(posthog-js@1.354.4)(react@18.3.1)
       posthog-js:
         specifier: ^1.354.4
         version: 1.354.4
@@ -845,6 +848,16 @@ packages:
 
   '@posthog/core@1.23.1':
     resolution: {integrity: sha512-GViD5mOv/mcbZcyzz3z9CS0R79JzxVaqEz4sP5Dsea178M/j3ZWe6gaHDZB9yuyGfcmIMQ/8K14yv+7QrK4sQQ==}
+
+  '@posthog/react@1.8.1':
+    resolution: {integrity: sha512-/tRMKPm8PKvCgmKjgKM4ojSbOpdzzKyDNK8upbK6cKedZ1wdtOcSAMiLEyNCatFB2dqwB85LcjrhkaO8lFnHNQ==}
+    peerDependencies:
+      '@types/react': '>=16.8.0'
+      posthog-js: '>=1.257.2'
+      react: '>=16.8.0'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
 
   '@posthog/types@1.354.4':
     resolution: {integrity: sha512-9zhKGfJwGshwfpjJISY84mgmDrYZk4/0BhJdy9AGcmazGn6uxxA0KhzcFNbDSMe0iWilPuBodpthakiPl+4qkw==}
@@ -2580,6 +2593,13 @@ snapshots:
   '@posthog/core@1.23.1':
     dependencies:
       cross-spawn: 7.0.6
+
+  '@posthog/react@1.8.1(@types/react@18.3.27)(posthog-js@1.354.4)(react@18.3.1)':
+    dependencies:
+      posthog-js: 1.354.4
+      react: 18.3.1
+    optionalDependencies:
+      '@types/react': 18.3.27
 
   '@posthog/types@1.354.4': {}
 

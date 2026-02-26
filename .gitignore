@@ -7,3 +7,4 @@ frontend/test-results/
 .claude/
 frontend/dist/
 backend/.env
+frontend/.env

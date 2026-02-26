@@ -55,7 +55,18 @@ GOOGLE_CLIENT_SECRET=your-client-secret
 COOKIE_SECRET=any-random-string-at-least-32-characters-long
 ```
 
-### 4. Run Development Server
+### 4. (Optional) Configure PostHog Analytics
+
+If you want to enable analytics tracking, create `frontend/.env` (copy from `.env.example`):
+
+```bash
+VITE_PUBLIC_POSTHOG_KEY=your-posthog-project-api-key
+VITE_PUBLIC_POSTHOG_HOST=https://app.posthog.com  # or your self-hosted URL
+```
+
+Get your PostHog API key from [app.posthog.com](https://app.posthog.com). Analytics will be automatically disabled if these variables are not set.
+
+### 5. Run Development Server
 
 ```bash
 # Build frontend first
@@ -74,6 +85,8 @@ cd ../backend && pnpm wrangler dev
 - **Backend**: Cloudflare Workers
 - **Database**: Google Sheets API v4
 - **Auth**: Google OAuth 2.0 (user sign-in with consent)
+- **Analytics**: PostHog (optional)
+- **Testing**: Playwright E2E tests
 
 ## 📋 Features
 
@@ -85,6 +98,11 @@ cd ../backend && pnpm wrangler dev
 - ✅ Dashboard with stats
 - ✅ Google Sheets sync (web app + direct Sheets editing)
 - ✅ Per-user spreadsheet (auto-created on first login)
+- ✅ Dark mode with system preference detection
+- ✅ Toast notification system
+- ✅ Button loading states
+- ✅ User profile page
+- ✅ PostHog analytics integration (optional)
 
 ## 🔐 Authentication Flow
 
@@ -101,6 +119,20 @@ cd ../backend && pnpm wrangler dev
 
 The app is deployed as a single Cloudflare Worker (serves both API and frontend static assets).
 
+### Prerequisites
+
+1. Configure `backend/.env` (copy from `.env.example`):
+   ```bash
+   CLOUDFLARE_API_TOKEN=your-cloudflare-api-token
+   ```
+   Get your API token from [Cloudflare Dashboard](https://dash.cloudflare.com/profile/api-tokens) → Create Token → Edit Cloudflare Workers
+
+2. Set environment variables in frontend (optional):
+   - PostHog analytics will be bundled into the frontend during build
+   - Make sure `frontend/.env` is configured if you want analytics in production
+
+### Deploy
+
 ```bash
 # Build frontend first
 cd frontend && pnpm build
@@ -116,6 +148,28 @@ pnpm wrangler secret put COOKIE_SECRET
 
 > **Note:** Update the OAuth redirect URI in Google Cloud Console to match your production URL:
 > `https://sheetcrm.<your-subdomain>.workers.dev/api/v1/auth/callback`
+
+## 🧪 Testing
+
+### E2E Tests (Playwright)
+
+The project includes Playwright for end-to-end testing:
+
+```bash
+# Install Playwright browsers (first time only)
+cd frontend && pnpm exec playwright install
+
+# Run tests
+pnpm exec playwright test
+
+# Run tests with UI
+pnpm exec playwright test --ui
+
+# Run tests in headed mode
+pnpm exec playwright test --headed
+```
+
+**Note:** Make sure the development server is running before executing tests.
 
 ## 📝 API Endpoints
 

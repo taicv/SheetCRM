@@ -2,14 +2,14 @@
  * SheetCRM Analytics — PostHog integration
  *
  * Setup:
- * 1. pnpm add posthog-js  (run in frontend/)
- * 2. Replace POSTHOG_KEY below with your project key from app.posthog.com
- * 3. Set POSTHOG_HOST if self-hosted, otherwise leave as-is
+ * 1. Copy frontend/.env.example to frontend/.env
+ * 2. Set VITE_PUBLIC_POSTHOG_KEY with your project key from app.posthog.com
+ * 3. Set VITE_PUBLIC_POSTHOG_HOST if self-hosted, otherwise use https://app.posthog.com
  */
 
-// Replace with your PostHog project API key
-const POSTHOG_KEY = import.meta.env.VITE_POSTHOG_KEY as string | undefined;
-const POSTHOG_HOST = import.meta.env.VITE_POSTHOG_HOST as string | undefined ?? 'https://app.posthog.com';
+// PostHog configuration from environment variables
+const POSTHOG_KEY = import.meta.env.VITE_PUBLIC_POSTHOG_KEY as string | undefined;
+const POSTHOG_HOST = import.meta.env.VITE_PUBLIC_POSTHOG_HOST as string | undefined ?? 'https://app.posthog.com';
 
 type EventName =
     | 'login'
