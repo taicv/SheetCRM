@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 
 interface HeaderProps {
@@ -11,6 +12,7 @@ export function Header({ onRefresh, isRefreshing }: HeaderProps) {
     const { user, logout } = useAuth();
     const [showMenu, setShowMenu] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
+    const navigate = useNavigate();
 
     // Close menu on outside click
     useEffect(() => {
@@ -87,13 +89,22 @@ export function Header({ onRefresh, isRefreshing }: HeaderProps) {
                                 <p className="text-xs text-gray-500 truncate">{user?.email}</p>
                             </div>
                             <button
+                                onClick={() => {
+                                    setShowMenu(false);
+                                    navigate('/profile');
+                                }}
+                                className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                            >
+                                👤 Hồ sơ cá nhân
+                            </button>
+                            <button
                                 onClick={async () => {
                                     setShowMenu(false);
                                     await logout();
                                 }}
                                 className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
                             >
-                                Sign Out
+                                🚪 Đăng xuất
                             </button>
                         </div>
                     )}

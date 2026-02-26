@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import type { Company, CompanyFormData } from '@/types';
 import { companiesApi } from '@/services/api';
+import { useToast } from '@/context/ToastContext';
 
 // Validate and sanitize URLs — only allow http/https protocols
 function sanitizeUrl(url: string): string | null {
@@ -23,6 +24,9 @@ export function CompaniesPage() {
     const [search, setSearch] = useState('');
     const [showModal, setShowModal] = useState(false);
     const [editingCompany, setEditingCompany] = useState<Company | null>(null);
+    const [submitting, setSubmitting] = useState(false);
+    const [deletingId, setDeletingId] = useState<string | null>(null);
+    const toast = useToast();
 
     useEffect(() => {
         loadData();
@@ -50,26 +54,35 @@ export function CompaniesPage() {
 
     async function handleSave(data: CompanyFormData) {
         try {
+            setSubmitting(true);
             if (editingCompany) {
                 await companiesApi.update(editingCompany.id, data);
+                toast.success('Đã cập nhật company!');
             } else {
                 await companiesApi.create(data);
+                toast.success('Đã thêm company mới!');
             }
             setShowModal(false);
             setEditingCompany(null);
             loadData();
         } catch (err) {
-            alert(err instanceof Error ? err.message : 'Failed to save');
+            toast.error(err instanceof Error ? err.message : 'Lưu thất bại');
+        } finally {
+            setSubmitting(false);
         }
     }
 
     async function handleDelete(id: string) {
         if (!confirm('Bạn có chắc muốn xóa company này?')) return;
         try {
+            setDeletingId(id);
             await companiesApi.delete(id);
+            toast.success('Đã xóa company!');
             loadData();
         } catch (err) {
-            alert(err instanceof Error ? err.message : 'Failed to delete');
+            toast.error(err instanceof Error ? err.message : 'Xóa thất bại');
+        } finally {
+            setDeletingId(null);
         }
     }
 
@@ -151,9 +164,10 @@ export function CompaniesPage() {
                                 </button>
                                 <button
                                     onClick={() => handleDelete(company.id)}
-                                    className="text-sm text-red-600 hover:text-red-700"
+                                    disabled={deletingId === company.id}
+                                    className="text-sm text-red-600 hover:text-red-700 disabled:opacity-50"
                                 >
-                                    Xóa
+                                    {deletingId === company.id ? 'Đang xóa...' : 'Xóa'}
                                 </button>
                             </div>
                         </div>
@@ -166,6 +180,7 @@ export function CompaniesPage() {
                     company={editingCompany}
                     onSave={handleSave}
                     onClose={() => { setShowModal(false); setEditingCompany(null); }}
+                    submitting={submitting}
                 />
             )}
         </div>
@@ -176,10 +191,12 @@ function CompanyModal({
     company,
     onSave,
     onClose,
+    submitting,
 }: {
     company: Company | null;
     onSave: (data: CompanyFormData) => void;
     onClose: () => void;
+    submitting: boolean;
 }) {
     const [formData, setFormData] = useState<CompanyFormData>({
         name: company?.name || '',
@@ -188,11 +205,12 @@ function CompanyModal({
         address: company?.address || '',
         notes: company?.notes || '',
     });
+    const toast = useToast();
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (!formData.name.trim()) {
-            alert('Vui lòng nhập tên company');
+            toast.error('Vui lòng nhập tên company');
             return;
         }
         onSave(formData);
@@ -257,10 +275,20 @@ function CompanyModal({
                         />
                     </div>
                     <div className="flex gap-3 pt-4">
-                        <button type="submit" className="btn btn-primary flex-1">
-                            {company ? 'Cập nhật' : 'Thêm'}
+                        <button
+                            type="submit"
+                            disabled={submitting}
+                            className="btn btn-primary flex-1 flex items-center justify-center gap-2 disabled:opacity-60"
+                        >
+                            {submitting && <span className="animate-spin inline-block">⏳</span>}
+                            {submitting ? 'Đang lưu...' : (company ? 'Cập nhật' : 'Thêm')}
                         </button>
-                        <button type="button" onClick={onClose} className="btn btn-secondary">
+                        <button
+                            type="button"
+                            onClick={onClose}
+                            disabled={submitting}
+                            className="btn btn-secondary disabled:opacity-60"
+                        >
                             Hủy
                         </button>
                     </div>

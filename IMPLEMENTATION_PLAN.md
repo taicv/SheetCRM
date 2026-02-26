@@ -95,7 +95,7 @@
 - [x] Responsive design (mobile-first)
 - [x] Loading states and skeletons (page-level)
 - [x] Error states and empty states
-- [ ] Toast notifications (hiện đang dùng `alert()` - cần thay thế)
+- [x] Toast notifications (hiện đang dùng `alert()` - cần thay thế)
 - [ ] Keyboard navigation (optional enhancement)
 
 ## Phase 5: Integration & Testing
@@ -108,38 +108,38 @@
 
 ---
 
-## Phase 6: Standard MVP Requirements (Chưa làm)
+## Phase 6: Standard MVP Requirements ✅ HOÀN THÀNH
 
 > Các tính năng bắt buộc theo tiêu chí đánh giá MVP
 
 ### F9: Toast Notification System
 
-- [ ] Tạo `Toast.tsx` component (success/error/warning/info types)
-- [ ] Tạo `useToast` hook hoặc `ToastContext` để dùng toàn app
-- [ ] Tích hợp `ToastContainer` vào `Layout.tsx` hoặc `App.tsx`
-- [ ] Thay thế toàn bộ `alert()` trong `ContactsPage.tsx` bằng toast
-- [ ] Thay thế toàn bộ `alert()` trong `CompaniesPage.tsx` bằng toast
-- [ ] Thay thế toàn bộ `alert()` trong `RemindersPage.tsx` bằng toast
-- [ ] Toast success khi tạo/sửa/xóa thành công
-- [ ] Toast error khi API thất bại
+- [x] Tạo `ToastContext.tsx` component (success/error/warning/info types)
+- [x] Tạo `useToast` hook trong ToastContext
+- [x] Tích hợp `ToastProvider` vào `App.tsx`
+- [x] Thay thế toàn bộ `alert()` trong `ContactsPage.tsx` bằng toast
+- [x] Thay thế toàn bộ `alert()` trong `CompaniesPage.tsx` bằng toast
+- [x] Thay thế toàn bộ `alert()` trong `RemindersPage.tsx` bằng toast
+- [x] Toast success khi tạo/sửa/xóa thành công
+- [x] Toast error khi API thất bại
 
 ### F10: Button Loading States
 
-- [ ] Thêm `submitting` state vào các form modal (Contacts, Companies, Reminders)
-- [ ] Disable submit button + hiện spinner khi đang gọi API
-- [ ] Disable delete button khi đang xóa
-- [ ] Prevent double-submit (tất cả forms)
+- [x] Thêm `submitting` state vào các form modal (Contacts, Companies, Reminders)
+- [x] Disable submit button + hiện spinner khi đang gọi API
+- [x] Disable delete button khi đang xóa (`deletingId` state)
+- [x] Prevent double-submit (tất cả forms)
 
 ### F11: User Profile Page
 
-- [ ] Thêm `/profile` route vào `App.tsx`
-- [ ] Tạo `ProfilePage.tsx` hiển thị avatar, name, email từ AuthContext
-- [ ] Thêm stats: số contacts, companies, reminders của user
-- [ ] Thêm link "Mở Google Sheet" trong profile page
-- [ ] Thêm nút Logout trong profile page
-- [ ] Thêm "Profile" vào Sidebar navigation
-- [ ] Cập nhật Header dropdown: link đến `/profile` thay vì chỉ logout
-- [ ] Thêm backend endpoint `/api/v1/auth/me` trả về user info (name, email, picture, spreadsheetId)
+- [x] Thêm `/profile` route vào `App.tsx`
+- [x] Tạo `ProfilePage.tsx` hiển thị avatar, name, email từ AuthContext
+- [x] Thêm stats: số contacts, companies, reminders của user
+- [x] Thêm link "Mở Google Sheet" trong profile page
+- [x] Thêm nút Logout trong profile page
+- [x] Thêm "Profile" vào Sidebar navigation
+- [x] Cập nhật Header dropdown: link đến `/profile` thay vì chỉ logout
+- [x] Thêm backend endpoint `/api/v1/auth/me` trả về user info (name, email, picture, spreadsheetId)
 
 ---
 

@@ -334,6 +334,23 @@ router.add('GET', '/api/v1/auth/status', async (request, _, __, env) => {
     }, 200, headers);
 }, false);
 
+// Auth me - return current user info (requires valid session)
+router.add('GET', '/api/v1/auth/me', async (request, _, __, env) => {
+    const session = await getSession(request, env);
+    if (!session) {
+        return errorResponse('Unauthorized', 401);
+    }
+    const headers: Record<string, string> = {};
+    const encryptedSession = await encryptSession(session, env.COOKIE_SECRET);
+    headers['Set-Cookie'] = buildSetCookie(SESSION_COOKIE_NAME, encryptedSession, SESSION_MAX_AGE);
+    return jsonResponse({
+        email: session.email,
+        name: session.name,
+        picture: session.picture,
+        spreadsheetId: session.spreadsheetId,
+    }, 200, headers);
+}, false);
+
 // Logout - clear session cookie
 router.add('POST', '/api/v1/auth/logout', async () => {
     return new Response(JSON.stringify({ success: true }), {

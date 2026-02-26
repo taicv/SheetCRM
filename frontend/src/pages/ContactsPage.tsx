@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import type { Contact, Company, ContactFormData } from '@/types';
 import { contactsApi, companiesApi } from '@/services/api';
+import { useToast } from '@/context/ToastContext';
 
 export function ContactsPage() {
     const [contacts, setContacts] = useState<Contact[]>([]);
@@ -10,6 +11,9 @@ export function ContactsPage() {
     const [search, setSearch] = useState('');
     const [showModal, setShowModal] = useState(false);
     const [editingContact, setEditingContact] = useState<Contact | null>(null);
+    const [submitting, setSubmitting] = useState(false);
+    const [deletingId, setDeletingId] = useState<string | null>(null);
+    const toast = useToast();
 
     useEffect(() => {
         loadData();
@@ -47,26 +51,35 @@ export function ContactsPage() {
 
     async function handleSave(data: ContactFormData) {
         try {
+            setSubmitting(true);
             if (editingContact) {
                 await contactsApi.update(editingContact.id, data);
+                toast.success('Đã cập nhật contact!');
             } else {
                 await contactsApi.create(data);
+                toast.success('Đã thêm contact mới!');
             }
             setShowModal(false);
             setEditingContact(null);
             loadData();
         } catch (err) {
-            alert(err instanceof Error ? err.message : 'Failed to save');
+            toast.error(err instanceof Error ? err.message : 'Lưu thất bại');
+        } finally {
+            setSubmitting(false);
         }
     }
 
     async function handleDelete(id: string) {
         if (!confirm('Bạn có chắc muốn xóa contact này?')) return;
         try {
+            setDeletingId(id);
             await contactsApi.delete(id);
+            toast.success('Đã xóa contact!');
             loadData();
         } catch (err) {
-            alert(err instanceof Error ? err.message : 'Failed to delete');
+            toast.error(err instanceof Error ? err.message : 'Xóa thất bại');
+        } finally {
+            setDeletingId(null);
         }
     }
 
@@ -155,9 +168,10 @@ export function ContactsPage() {
                                             </button>
                                             <button
                                                 onClick={() => handleDelete(contact.id)}
-                                                className="text-sm text-red-600 hover:text-red-700"
+                                                disabled={deletingId === contact.id}
+                                                className="text-sm text-red-600 hover:text-red-700 disabled:opacity-50"
                                             >
-                                                Xóa
+                                                {deletingId === contact.id ? 'Đang xóa...' : 'Xóa'}
                                             </button>
                                         </div>
                                     </td>
@@ -175,6 +189,7 @@ export function ContactsPage() {
                     companies={companies}
                     onSave={handleSave}
                     onClose={() => { setShowModal(false); setEditingContact(null); }}
+                    submitting={submitting}
                 />
             )}
         </div>
@@ -186,11 +201,13 @@ function ContactModal({
     companies,
     onSave,
     onClose,
+    submitting,
 }: {
     contact: Contact | null;
     companies: Company[];
     onSave: (data: ContactFormData) => void;
     onClose: () => void;
+    submitting: boolean;
 }) {
     const [formData, setFormData] = useState<ContactFormData>({
         name: contact?.name || '',
@@ -200,11 +217,12 @@ function ContactModal({
         source: contact?.source || '',
         notes: contact?.notes || '',
     });
+    const toast = useToast();
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (!formData.name.trim()) {
-            alert('Vui lòng nhập tên');
+            toast.error('Vui lòng nhập tên');
             return;
         }
         onSave(formData);
@@ -283,10 +301,20 @@ function ContactModal({
                         />
                     </div>
                     <div className="flex gap-3 pt-4">
-                        <button type="submit" className="btn btn-primary flex-1">
-                            {contact ? 'Cập nhật' : 'Thêm'}
+                        <button
+                            type="submit"
+                            disabled={submitting}
+                            className="btn btn-primary flex-1 flex items-center justify-center gap-2 disabled:opacity-60"
+                        >
+                            {submitting && <span className="animate-spin inline-block">⏳</span>}
+                            {submitting ? 'Đang lưu...' : (contact ? 'Cập nhật' : 'Thêm')}
                         </button>
-                        <button type="button" onClick={onClose} className="btn btn-secondary">
+                        <button
+                            type="button"
+                            onClick={onClose}
+                            disabled={submitting}
+                            className="btn btn-secondary disabled:opacity-60"
+                        >
                             Hủy
                         </button>
                     </div>

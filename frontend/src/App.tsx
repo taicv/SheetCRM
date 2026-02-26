@@ -1,12 +1,12 @@
 import { Routes, Route } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
+import { ToastProvider } from '@/context/ToastContext';
 import { Layout } from '@/components/layout';
-import { DashboardPage, ContactsPage, CompaniesPage, RemindersPage, LoginPage } from '@/pages';
+import { DashboardPage, ContactsPage, CompaniesPage, RemindersPage, LoginPage, ProfilePage } from '@/pages';
 
 function App() {
     const { isAuthenticated, loading } = useAuth();
 
-    // Show loading spinner while checking auth
     if (loading) {
         return (
             <div className="loading-screen">
@@ -16,20 +16,22 @@ function App() {
         );
     }
 
-    // Show login page if not authenticated
     if (!isAuthenticated) {
         return <LoginPage />;
     }
 
     return (
-        <Layout>
-            <Routes>
-                <Route path="/" element={<DashboardPage />} />
-                <Route path="/contacts" element={<ContactsPage />} />
-                <Route path="/companies" element={<CompaniesPage />} />
-                <Route path="/reminders" element={<RemindersPage />} />
-            </Routes>
-        </Layout>
+        <ToastProvider>
+            <Layout>
+                <Routes>
+                    <Route path="/" element={<DashboardPage />} />
+                    <Route path="/contacts" element={<ContactsPage />} />
+                    <Route path="/companies" element={<CompaniesPage />} />
+                    <Route path="/reminders" element={<RemindersPage />} />
+                    <Route path="/profile" element={<ProfilePage />} />
+                </Routes>
+            </Layout>
+        </ToastProvider>
     );
 }
 

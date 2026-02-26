@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import type { Reminder, Contact, ReminderFormData } from '@/types';
 import { remindersApi, contactsApi } from '@/services/api';
+import { useToast } from '@/context/ToastContext';
 
 export function RemindersPage() {
     const [reminders, setReminders] = useState<Reminder[]>([]);
@@ -9,6 +10,10 @@ export function RemindersPage() {
     const [error, setError] = useState<string | null>(null);
     const [showModal, setShowModal] = useState(false);
     const [filter, setFilter] = useState<'all' | 'upcoming' | 'done'>('upcoming');
+    const [submitting, setSubmitting] = useState(false);
+    const [deletingId, setDeletingId] = useState<string | null>(null);
+    const [togglingId, setTogglingId] = useState<string | null>(null);
+    const toast = useToast();
 
     useEffect(() => {
         loadData();
@@ -47,30 +52,42 @@ export function RemindersPage() {
 
     async function handleSave(data: ReminderFormData) {
         try {
+            setSubmitting(true);
             await remindersApi.create(data);
+            toast.success('Đã thêm reminder!');
             setShowModal(false);
             loadData();
         } catch (err) {
-            alert(err instanceof Error ? err.message : 'Failed to save');
+            toast.error(err instanceof Error ? err.message : 'Lưu thất bại');
+        } finally {
+            setSubmitting(false);
         }
     }
 
     async function handleToggleDone(reminder: Reminder) {
         try {
+            setTogglingId(reminder.id);
             await remindersApi.update(reminder.id, { is_done: !reminder.is_done });
+            toast.success(reminder.is_done ? 'Đã bỏ hoàn thành!' : 'Đã hoàn thành!');
             loadData();
         } catch (err) {
-            alert(err instanceof Error ? err.message : 'Failed to update');
+            toast.error(err instanceof Error ? err.message : 'Cập nhật thất bại');
+        } finally {
+            setTogglingId(null);
         }
     }
 
     async function handleDelete(id: string) {
         if (!confirm('Bạn có chắc muốn xóa reminder này?')) return;
         try {
+            setDeletingId(id);
             await remindersApi.delete(id);
+            toast.success('Đã xóa reminder!');
             loadData();
         } catch (err) {
-            alert(err instanceof Error ? err.message : 'Failed to delete');
+            toast.error(err instanceof Error ? err.message : 'Xóa thất bại');
+        } finally {
+            setDeletingId(null);
         }
     }
 
@@ -138,12 +155,17 @@ export function RemindersPage() {
                         >
                             <button
                                 onClick={() => handleToggleDone(reminder)}
-                                className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${reminder.is_done
+                                disabled={togglingId === reminder.id}
+                                className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all shrink-0 disabled:opacity-50 ${reminder.is_done
                                         ? 'bg-emerald-500 border-emerald-500 text-white'
                                         : 'border-gray-300 hover:border-primary-500'
                                     }`}
                             >
-                                {reminder.is_done && '✓'}
+                                {togglingId === reminder.id ? (
+                                    <span className="text-xs animate-spin">⏳</span>
+                                ) : (
+                                    reminder.is_done && '✓'
+                                )}
                             </button>
 
                             <div className="flex-1 min-w-0">
@@ -155,16 +177,17 @@ export function RemindersPage() {
                                 </p>
                             </div>
 
-                            <div className="text-right">
+                            <div className="text-right shrink-0">
                                 <p className={`text-sm font-medium ${isOverdue(reminder.due_date) ? 'text-red-600' : 'text-gray-600'
                                     }`}>
                                     {new Date(reminder.due_date).toLocaleDateString('vi-VN')}
                                 </p>
                                 <button
                                     onClick={() => handleDelete(reminder.id)}
-                                    className="text-xs text-red-500 hover:text-red-600"
+                                    disabled={deletingId === reminder.id}
+                                    className="text-xs text-red-500 hover:text-red-600 disabled:opacity-50"
                                 >
-                                    Xóa
+                                    {deletingId === reminder.id ? 'Đang xóa...' : 'Xóa'}
                                 </button>
                             </div>
                         </div>
@@ -177,6 +200,7 @@ export function RemindersPage() {
                     contacts={contacts}
                     onSave={handleSave}
                     onClose={() => setShowModal(false)}
+                    submitting={submitting}
                 />
             )}
         </div>
@@ -187,10 +211,12 @@ function ReminderModal({
     contacts,
     onSave,
     onClose,
+    submitting,
 }: {
     contacts: Contact[];
     onSave: (data: ReminderFormData) => void;
     onClose: () => void;
+    submitting: boolean;
 }) {
     const [formData, setFormData] = useState<ReminderFormData>({
         contact_id: '',
@@ -198,11 +224,12 @@ function ReminderModal({
         due_date: new Date().toISOString().split('T')[0],
         is_done: false,
     });
+    const toast = useToast();
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (!formData.title.trim() || !formData.contact_id) {
-            alert('Vui lòng điền đầy đủ thông tin');
+            toast.error('Vui lòng điền đầy đủ thông tin');
             return;
         }
         onSave(formData);
@@ -248,10 +275,20 @@ function ReminderModal({
                         />
                     </div>
                     <div className="flex gap-3 pt-4">
-                        <button type="submit" className="btn btn-primary flex-1">
-                            Thêm
+                        <button
+                            type="submit"
+                            disabled={submitting}
+                            className="btn btn-primary flex-1 flex items-center justify-center gap-2 disabled:opacity-60"
+                        >
+                            {submitting && <span className="animate-spin inline-block">⏳</span>}
+                            {submitting ? 'Đang lưu...' : 'Thêm'}
                         </button>
-                        <button type="button" onClick={onClose} className="btn btn-secondary">
+                        <button
+                            type="button"
+                            onClick={onClose}
+                            disabled={submitting}
+                            className="btn btn-secondary disabled:opacity-60"
+                        >
                             Hủy
                         </button>
                     </div>

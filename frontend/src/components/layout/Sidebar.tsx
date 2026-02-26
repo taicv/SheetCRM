@@ -6,6 +6,7 @@ const navItems = [
     { to: '/contacts', label: 'Contacts', icon: '👥' },
     { to: '/companies', label: 'Companies', icon: '🏢' },
     { to: '/reminders', label: 'Reminders', icon: '⏰' },
+    { to: '/profile', label: 'Hồ sơ', icon: '👤' },
 ];
 
 export function Sidebar() {
