@@ -6,3 +6,4 @@ node_modules/
 frontend/test-results/
 .claude/
 frontend/dist/
+backend/.env
