@@ -1,4 +1,4 @@
-// MiniCRM API - Cloudflare Workers Entry Point
+// SheetCRM API - Cloudflare Workers Entry Point
 // OAuth 2.0 user-based authentication
 
 import { GoogleSheetsClient, type SheetRow } from './sheets';

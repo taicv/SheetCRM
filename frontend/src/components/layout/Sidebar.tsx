@@ -18,7 +18,7 @@ export function Sidebar() {
             <div className="p-6 border-b border-gray-200">
                 <h1 className="text-xl font-bold text-primary-600 flex items-center gap-2">
                     <span className="text-2xl">🏢</span>
-                    MiniCRM
+                    SheetCRM
                 </h1>
                 <p className="text-xs text-gray-500 mt-1">Google Sheets Edition</p>
             </div>

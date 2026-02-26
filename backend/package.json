@@ -1,7 +1,7 @@
 {
-    "name": "minicrm-backend",
+    "name": "sheetcrm-backend",
     "version": "1.0.0",
-    "description": "MiniCRM API - Cloudflare Workers backend with Google Sheets database",
+    "description": "SheetCRM API - Cloudflare Workers backend with Google Sheets database",
     "main": "src/index.ts",
     "scripts": {
         "dev": "wrangler dev",
