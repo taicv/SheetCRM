@@ -101,13 +101,52 @@
   - User có thể edit trên Sheets, app tự refresh
   - Acceptance: Thay đổi trên Sheets phản ánh trong app (sau refresh)
 
-### Nice-to-have (Post-MVP)
+- [ ] **F9: Feedback Loop (Toast Notifications)**
+  - Thay thế `alert()` bằng toast component chuyên nghiệp
+  - Toast types: success (xanh), error (đỏ), warning (vàng), info (xanh dương)
+  - Auto-dismiss sau 3 giây, có thể close thủ công
+  - Position: top-right góc màn hình
+  - Show toast khi: tạo/sửa/xóa thành công, có lỗi API
+  - Acceptance: Mọi action đều có phản hồi toast rõ ràng
 
-- [ ] Deals/Pipeline management
-- [ ] Import/Export CSV
-- [ ] Email integration
-- [ ] Mobile responsive optimization
-- [ ] Dark mode
+- [ ] **F10: Button Loading States**
+  - Buttons show spinner + disabled khi đang call API
+  - Submit button trong forms không nhấn được 2 lần
+  - Delete button disabled trong lúc xóa
+  - Acceptance: Không có double-submit, UX rõ ràng khi chờ
+
+- [ ] **F11: User Profile Page**
+  - Trang `/profile` riêng trong app
+  - Hiển thị: Avatar (từ Google), Tên, Email (từ OAuth)
+  - Thông tin app: Ngày đăng ký, số lượng contacts/companies
+  - Link mở Google Sheet cá nhân
+  - Acceptance: User thấy và quản lý được thông tin của mình
+
+### Nice-to-have (Điểm cộng - Post-MVP)
+
+- [ ] **B1: Analytics (PostHog)**
+  - Track page views, user actions (CRUD events)
+  - Tích hợp PostHog (self-hosted hoặc cloud free tier)
+  - Không cần dashboard phức tạp, chỉ cần sự kiện cơ bản
+
+- [ ] **B2: SEO Optimization**
+  - Open Graph meta tags (og:title, og:description, og:image)
+  - Twitter Card meta tags
+  - Structured data (JSON-LD) cho app
+  - Canonical URL
+  - Sitemap cơ bản (chỉ landing/login page vì app cần auth)
+
+- [ ] **B3: PWA (Progressive Web App)**
+  - `manifest.json` với icon, name, theme_color
+  - Service worker cho offline fallback (chỉ cần shell, data cần network)
+  - "Add to Home Screen" prompt
+  - Acceptance: App cài được lên màn hình điện thoại
+
+- [ ] **B4: Dark Mode**
+  - Toggle sáng/tối trong header hoặc settings
+  - Lưu preference vào localStorage
+  - Tailwind `dark:` variants cho toàn bộ UI
+  - Acceptance: Chuyển mode mượt mà, không flash trắng khi load
 
 ---
 
@@ -135,6 +174,28 @@
                                               [Xem/Edit thông tin]
                                               [Xem Notes timeline]
                                               [Thêm Reminder]
+```
+
+### Flow: Feedback khi thao tác
+
+```
+[User click "Save"] → [Button spinner + disabled]
+                              ↓
+                     [API call...]
+                              ↓
+              [Success] → [Toast "Đã lưu thành công!"] → [Auto dismiss 3s]
+              [Error]   → [Toast "Lỗi: ..." đỏ]        → [Close thủ công]
+```
+
+### Flow: Xem trang Profile
+
+```
+[Click Avatar/User menu] → [Chọn "Hồ sơ cá nhân"]
+                                    ↓
+                           [/profile page]
+                           [Hiện: Avatar, Tên, Email]
+                           [Stats: X contacts, Y companies]
+                           [Link: Mở Google Sheet]
 ```
 
 ### Flow: Sử dụng Google Sheets trực tiếp
@@ -227,6 +288,49 @@
 └──────────┴──────────────────────────────────────────────────┘
 ```
 
+### Screen 4: Toast Notifications
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  🏢 MiniCRM                        [🔍 Search] [👤 User]    │
+│                                                             │
+│                                   ┌──────────────────────┐ │
+│                                   │ ✅ Đã lưu thành công │ │
+│                                   │                    ✕  │ │
+│                                   └──────────────────────┘ │
+│   (main content...)               ┌──────────────────────┐ │
+│                                   │ ❌ Lỗi kết nối API   │ │
+│                                   │                    ✕  │ │
+│                                   └──────────────────────┘ │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Screen 5: User Profile Page
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  🏢 MiniCRM                        [🔍 Search] [👤 User]    │
+├──────────┬──────────────────────────────────────────────────┤
+│          │   Hồ sơ cá nhân                                  │
+│ Dashboard│                                                  │
+│          │   ┌─────────────────────────────────────────┐    │
+│ Contacts │   │     [Avatar 80px]                       │    │
+│          │   │     Nguyễn Văn A                        │    │
+│ Companies│   │     nguyenvana@gmail.com                │    │
+│          │   └─────────────────────────────────────────┘    │
+│ Reminders│                                                  │
+│          │   ┌─────────────────────────────────────────┐    │
+│ Profile  │   │ Thống kê                                │    │
+│    ★     │   ├─────────────────────────────────────────┤    │
+│          │   │  Contacts: 125      Companies: 23       │    │
+│          │   │  Reminders: 8       Ngày dùng: 45 ngày  │    │
+│          │   └─────────────────────────────────────────┘    │
+│          │                                                  │
+│          │   [🔗 Mở Google Sheet của tôi]                   │
+│          │   [🚪 Đăng xuất]                                 │
+└──────────┴──────────────────────────────────────────────────┘
+```
+
 ---
 
 ## 7. Data Models
@@ -297,6 +401,17 @@
 | id | contact_id | title | due_date | is_done | created_at |
 |----|------------|-------|----------|---------|------------|
 | 1  | 1 | Follow up quotation | 2024-01-20 | FALSE | 2024-01-15 |
+
+### User Profile (từ OAuth session - không lưu DB)
+
+```typescript
+interface UserProfile {
+  name: string;         // Từ Google OAuth
+  email: string;        // Từ Google OAuth
+  picture: string;      // URL avatar từ Google
+  spreadsheetId: string; // ID Google Sheet của user
+}
+```
 
 ---
 

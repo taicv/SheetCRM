@@ -93,9 +93,9 @@
 
 - [x] Apply Tailwind styling per design guidelines
 - [x] Responsive design (mobile-first)
-- [x] Loading states and skeletons
+- [x] Loading states and skeletons (page-level)
 - [x] Error states and empty states
-- [x] Toast notifications
+- [ ] Toast notifications (hiện đang dùng `alert()` - cần thay thế)
 - [ ] Keyboard navigation (optional enhancement)
 
 ## Phase 5: Integration & Testing
@@ -108,9 +108,81 @@
 
 ---
 
-## ✅ WORKFLOW COMPLETED
+## Phase 6: Standard MVP Requirements (Chưa làm)
 
-All phases complete including OAuth 2.0 migration. Awaiting manual testing with real Google OAuth credentials.
+> Các tính năng bắt buộc theo tiêu chí đánh giá MVP
+
+### F9: Toast Notification System
+
+- [ ] Tạo `Toast.tsx` component (success/error/warning/info types)
+- [ ] Tạo `useToast` hook hoặc `ToastContext` để dùng toàn app
+- [ ] Tích hợp `ToastContainer` vào `Layout.tsx` hoặc `App.tsx`
+- [ ] Thay thế toàn bộ `alert()` trong `ContactsPage.tsx` bằng toast
+- [ ] Thay thế toàn bộ `alert()` trong `CompaniesPage.tsx` bằng toast
+- [ ] Thay thế toàn bộ `alert()` trong `RemindersPage.tsx` bằng toast
+- [ ] Toast success khi tạo/sửa/xóa thành công
+- [ ] Toast error khi API thất bại
+
+### F10: Button Loading States
+
+- [ ] Thêm `submitting` state vào các form modal (Contacts, Companies, Reminders)
+- [ ] Disable submit button + hiện spinner khi đang gọi API
+- [ ] Disable delete button khi đang xóa
+- [ ] Prevent double-submit (tất cả forms)
+
+### F11: User Profile Page
+
+- [ ] Thêm `/profile` route vào `App.tsx`
+- [ ] Tạo `ProfilePage.tsx` hiển thị avatar, name, email từ AuthContext
+- [ ] Thêm stats: số contacts, companies, reminders của user
+- [ ] Thêm link "Mở Google Sheet" trong profile page
+- [ ] Thêm nút Logout trong profile page
+- [ ] Thêm "Profile" vào Sidebar navigation
+- [ ] Cập nhật Header dropdown: link đến `/profile` thay vì chỉ logout
+- [ ] Thêm backend endpoint `/api/v1/auth/me` trả về user info (name, email, picture, spreadsheetId)
+
+---
+
+## Phase 7: Bonus Features (Điểm cộng)
+
+> Tính năng mở rộng - thực hiện sau khi Phase 6 hoàn tất
+
+### B1: Analytics (PostHog)
+
+- [ ] Tạo tài khoản PostHog (free tier) hoặc dùng Google Analytics 4
+- [ ] Cài `posthog-js` vào frontend
+- [ ] Tích hợp `posthog.capture()` cho các sự kiện: login, create_contact, create_company, create_reminder, delete_contact
+- [ ] Track page views tự động
+
+### B2: SEO Optimization
+
+- [ ] Cập nhật `index.html`: thêm `og:title`, `og:description`, `og:image`, `og:url`
+- [ ] Thêm Twitter Card meta tags
+- [ ] Thêm `robots.txt`
+- [ ] Thêm favicon chuyên nghiệp (thay `vite.svg`)
+
+### B3: PWA (Progressive Web App)
+
+- [ ] Tạo `public/manifest.json` với icon, name, theme_color, display: standalone
+- [ ] Cài `vite-plugin-pwa` và cấu hình service worker (Workbox)
+- [ ] Tạo các icon sizes (192x192, 512x512) cho manifest
+- [ ] Test "Add to Home Screen" trên mobile Chrome
+
+### B4: Dark Mode
+
+- [ ] Bật `darkMode: 'class'` trong `tailwind.config.js`
+- [ ] Thêm `ThemeContext` để quản lý light/dark state
+- [ ] Lưu preference vào `localStorage`
+- [ ] Thêm toggle button trong Header
+- [ ] Áp dụng `dark:` variants cho tất cả pages và components
+- [ ] Tránh flash trắng khi load (script inline trong `<head>`)
+
+---
+
+## ✅ PHASES 1-5 COMPLETED
+
+OAuth 2.0, per-user spreadsheet, full CRUD, responsive UI - tất cả đã hoàn thành.
+Còn lại: Phase 6 (bắt buộc) và Phase 7 (điểm cộng).
 
 ---
 
