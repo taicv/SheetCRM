@@ -1,11 +1,30 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { ToastProvider } from '@/context/ToastContext';
+import { ThemeProvider } from '@/context/ThemeContext';
 import { Layout } from '@/components/layout';
 import { DashboardPage, ContactsPage, CompaniesPage, RemindersPage, LoginPage, ProfilePage } from '@/pages';
+import { initAnalytics, track, identify } from '@/lib/analytics';
 
-function App() {
-    const { isAuthenticated, loading } = useAuth();
+// Initialize analytics once on load
+initAnalytics();
+
+function AppRoutes() {
+    const { isAuthenticated, loading, user } = useAuth();
+    const location = useLocation();
+
+    // Track page views
+    useEffect(() => {
+        track('page_view', { path: location.pathname });
+    }, [location.pathname]);
+
+    // Identify user after login
+    useEffect(() => {
+        if (user) {
+            identify(user.email, user.name);
+        }
+    }, [user]);
 
     if (loading) {
         return (
@@ -32,6 +51,14 @@ function App() {
                 </Routes>
             </Layout>
         </ToastProvider>
+    );
+}
+
+function App() {
+    return (
+        <ThemeProvider>
+            <AppRoutes />
+        </ThemeProvider>
     );
 }
 

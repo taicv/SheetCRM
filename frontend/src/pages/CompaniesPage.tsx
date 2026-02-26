@@ -96,8 +96,8 @@ export function CompaniesPage() {
 
     if (error) {
         return (
-            <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
-                <p className="text-red-600">❌ {error}</p>
+            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-6 text-center">
+                <p className="text-red-600 dark:text-red-400">❌ {error}</p>
                 <button onClick={loadData} className="btn btn-primary mt-4">Thử lại</button>
             </div>
         );
@@ -106,7 +106,7 @@ export function CompaniesPage() {
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
-                <h1 className="text-2xl font-bold text-gray-900">Companies</h1>
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Companies</h1>
                 <button
                     onClick={() => { setEditingCompany(null); setShowModal(true); }}
                     className="btn btn-primary"
@@ -127,7 +127,7 @@ export function CompaniesPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {filteredCompanies.length === 0 ? (
-                    <p className="text-gray-500 col-span-full text-center py-8">
+                    <p className="text-gray-500 dark:text-gray-400 col-span-full text-center py-8">
                         {search ? 'Không tìm thấy company' : 'Chưa có company nào'}
                     </p>
                 ) : (
@@ -138,8 +138,8 @@ export function CompaniesPage() {
                                     <span className="text-2xl">🏢</span>
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                    <h3 className="font-semibold text-gray-900 truncate">{company.name}</h3>
-                                    <p className="text-sm text-gray-500 truncate">{company.industry || 'Chưa phân loại'}</p>
+                                    <h3 className="font-semibold text-gray-900 dark:text-gray-100 truncate">{company.name}</h3>
+                                    <p className="text-sm text-gray-500 dark:text-gray-400 truncate">{company.industry || 'Chưa phân loại'}</p>
                                     {company.website && (() => {
                                         const safeUrl = sanitizeUrl(company.website);
                                         return safeUrl ? (
@@ -155,7 +155,7 @@ export function CompaniesPage() {
                                     })()}
                                 </div>
                             </div>
-                            <div className="mt-4 pt-4 border-t border-gray-100 flex gap-2">
+                            <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700 flex gap-2">
                                 <button
                                     onClick={() => { setEditingCompany(company); setShowModal(true); }}
                                     className="text-sm text-primary-600 hover:text-primary-700"
@@ -218,9 +218,9 @@ function CompanyModal({
 
     return (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-xl w-full max-w-lg mx-4">
-                <div className="p-6 border-b border-gray-200">
-                    <h2 className="text-xl font-semibold">
+            <div className="bg-white dark:bg-gray-800 rounded-xl w-full max-w-lg mx-4">
+                <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+                    <h2 className="text-xl font-semibold dark:text-white">
                         {company ? 'Sửa Company' : 'Thêm Company mới'}
                     </h2>
                 </div>

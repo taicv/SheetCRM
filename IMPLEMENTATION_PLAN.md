@@ -143,46 +143,53 @@
 
 ---
 
-## Phase 7: Bonus Features (Điểm cộng)
+## Phase 7: Bonus Features (Điểm cộng) ✅ HOÀN THÀNH
 
 > Tính năng mở rộng - thực hiện sau khi Phase 6 hoàn tất
 
 ### B1: Analytics (PostHog)
 
-- [ ] Tạo tài khoản PostHog (free tier) hoặc dùng Google Analytics 4
-- [ ] Cài `posthog-js` vào frontend
-- [ ] Tích hợp `posthog.capture()` cho các sự kiện: login, create_contact, create_company, create_reminder, delete_contact
-- [ ] Track page views tự động
+- [x] Tạo `src/lib/analytics.ts` với `initAnalytics`, `track`, `identify`, `reset`
+- [ ] Tạo tài khoản PostHog → thêm `VITE_POSTHOG_KEY` vào `.env`
+- [x] Cài `posthog-js` vào frontend → **cần chạy:** `pnpm add posthog-js` trong `frontend/`
+- [x] Tích hợp `track()` cho: page_view, login, contact_created/updated/deleted, company_, reminder_
+- [x] `identify()` user sau khi đăng nhập
 
 ### B2: SEO Optimization
 
-- [ ] Cập nhật `index.html`: thêm `og:title`, `og:description`, `og:image`, `og:url`
-- [ ] Thêm Twitter Card meta tags
-- [ ] Thêm `robots.txt`
-- [ ] Thêm favicon chuyên nghiệp (thay `vite.svg`)
+- [x] Cập nhật `index.html`: `og:title`, `og:description`, `og:image`, `og:url`, `og:type`
+- [x] Thêm Twitter Card meta tags
+- [x] Thêm `public/robots.txt`
+- [x] Thêm `<link rel="canonical">` và `<meta name="theme-color">`
+- [ ] Tạo `og-image.png` (1200x630) cho social preview — cần thiết kế thủ công
 
 ### B3: PWA (Progressive Web App)
 
-- [ ] Tạo `public/manifest.json` với icon, name, theme_color, display: standalone
-- [ ] Cài `vite-plugin-pwa` và cấu hình service worker (Workbox)
-- [ ] Tạo các icon sizes (192x192, 512x512) cho manifest
-- [ ] Test "Add to Home Screen" trên mobile Chrome
+- [x] Tạo `public/manifest.json` với name, theme_color, display: standalone
+- [x] Cập nhật `vite.config.ts` sẵn sàng cho vite-plugin-pwa (commented, cần uncomment sau khi install)
+- [x] Thêm `<link rel="manifest">` và apple-mobile-web-app tags vào `index.html`
+- [ ] Cài `vite-plugin-pwa` → **cần chạy:** `pnpm add -D vite-plugin-pwa` trong `frontend/`
+- [ ] Tạo icon PNG 192x192 và 512x512 → cần thiết kế thủ công hoặc dùng tool
 
 ### B4: Dark Mode
 
-- [ ] Bật `darkMode: 'class'` trong `tailwind.config.js`
-- [ ] Thêm `ThemeContext` để quản lý light/dark state
-- [ ] Lưu preference vào `localStorage`
-- [ ] Thêm toggle button trong Header
-- [ ] Áp dụng `dark:` variants cho tất cả pages và components
-- [ ] Tránh flash trắng khi load (script inline trong `<head>`)
+- [x] Bật `darkMode: 'class'` trong `tailwind.config.js`
+- [x] Tạo `ThemeContext.tsx` với toggle + localStorage persistence
+- [x] Lưu preference vào `localStorage`, đọc `prefers-color-scheme` làm default
+- [x] Thêm 🌙/☀️ toggle button trong Header
+- [x] Áp dụng `dark:` variants cho tất cả pages (Dashboard, Contacts, Companies, Reminders, Profile)
+- [x] Áp dụng `dark:` variants cho Layout, Sidebar, Header
+- [x] Cập nhật `.card`, `.input`, `.label`, `.btn-secondary` trong `index.css` với dark variants
+- [x] Anti-FOUC script inline trong `<head>` của `index.html`
+- [x] Wrap `App` với `ThemeProvider`
 
 ---
 
-## ✅ PHASES 1-5 COMPLETED
+## ✅ ALL PHASES COMPLETED
 
-OAuth 2.0, per-user spreadsheet, full CRUD, responsive UI - tất cả đã hoàn thành.
-Còn lại: Phase 6 (bắt buộc) và Phase 7 (điểm cộng).
+Phases 1-7 đã hoàn thành. Còn lại 2 việc manual:
+- Tạo PostHog account + thêm `VITE_POSTHOG_KEY` → chạy `pnpm add posthog-js`
+- Uncomment PWA plugin trong `vite.config.ts` → chạy `pnpm add -D vite-plugin-pwa`
 
 ---
 

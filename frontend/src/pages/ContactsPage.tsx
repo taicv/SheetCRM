@@ -93,8 +93,8 @@ export function ContactsPage() {
 
     if (error) {
         return (
-            <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
-                <p className="text-red-600">❌ {error}</p>
+            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-6 text-center">
+                <p className="text-red-600 dark:text-red-400">❌ {error}</p>
                 <button onClick={loadData} className="btn btn-primary mt-4">Thử lại</button>
             </div>
         );
@@ -103,7 +103,7 @@ export function ContactsPage() {
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
-                <h1 className="text-2xl font-bold text-gray-900">Contacts</h1>
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Contacts</h1>
                 <button
                     onClick={() => { setEditingContact(null); setShowModal(true); }}
                     className="btn btn-primary"
@@ -126,38 +126,38 @@ export function ContactsPage() {
             {/* Table */}
             <div className="card overflow-hidden">
                 <table className="w-full">
-                    <thead className="bg-gray-50 border-b border-gray-200">
+                    <thead className="bg-gray-50 dark:bg-gray-700/50 border-b border-gray-200 dark:border-gray-700">
                         <tr>
-                            <th className="text-left px-6 py-3 text-sm font-medium text-gray-500">Tên</th>
-                            <th className="text-left px-6 py-3 text-sm font-medium text-gray-500">Email</th>
-                            <th className="text-left px-6 py-3 text-sm font-medium text-gray-500">Phone</th>
-                            <th className="text-left px-6 py-3 text-sm font-medium text-gray-500">Company</th>
-                            <th className="text-left px-6 py-3 text-sm font-medium text-gray-500">Actions</th>
+                            <th className="text-left px-6 py-3 text-sm font-medium text-gray-500 dark:text-gray-400">Tên</th>
+                            <th className="text-left px-6 py-3 text-sm font-medium text-gray-500 dark:text-gray-400">Email</th>
+                            <th className="text-left px-6 py-3 text-sm font-medium text-gray-500 dark:text-gray-400">Phone</th>
+                            <th className="text-left px-6 py-3 text-sm font-medium text-gray-500 dark:text-gray-400">Company</th>
+                            <th className="text-left px-6 py-3 text-sm font-medium text-gray-500 dark:text-gray-400">Actions</th>
                         </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-100">
+                    <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
                         {filteredContacts.length === 0 ? (
                             <tr>
-                                <td colSpan={5} className="px-6 py-8 text-center text-gray-500">
+                                <td colSpan={5} className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
                                     {search ? 'Không tìm thấy contact' : 'Chưa có contact nào'}
                                 </td>
                             </tr>
                         ) : (
                             filteredContacts.map((contact) => (
-                                <tr key={contact.id} className="hover:bg-gray-50">
+                                <tr key={contact.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-3">
-                                            <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center">
-                                                <span className="text-primary-600 text-sm font-medium">
+                                            <div className="w-8 h-8 bg-primary-100 dark:bg-primary-900/50 rounded-full flex items-center justify-center">
+                                                <span className="text-primary-600 dark:text-primary-400 text-sm font-medium">
                                                     {contact.name.charAt(0).toUpperCase()}
                                                 </span>
                                             </div>
-                                            <span className="font-medium text-gray-900">{contact.name}</span>
+                                            <span className="font-medium text-gray-900 dark:text-gray-100">{contact.name}</span>
                                         </div>
                                     </td>
-                                    <td className="px-6 py-4 text-gray-600">{contact.email || '-'}</td>
-                                    <td className="px-6 py-4 text-gray-600">{contact.phone || '-'}</td>
-                                    <td className="px-6 py-4 text-gray-600">{getCompanyName(contact.company_id)}</td>
+                                    <td className="px-6 py-4 text-gray-600 dark:text-gray-400">{contact.email || '-'}</td>
+                                    <td className="px-6 py-4 text-gray-600 dark:text-gray-400">{contact.phone || '-'}</td>
+                                    <td className="px-6 py-4 text-gray-600 dark:text-gray-400">{getCompanyName(contact.company_id)}</td>
                                     <td className="px-6 py-4">
                                         <div className="flex gap-2">
                                             <button
@@ -230,9 +230,9 @@ function ContactModal({
 
     return (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
-                <div className="p-6 border-b border-gray-200">
-                    <h2 className="text-xl font-semibold">
+            <div className="bg-white dark:bg-gray-800 rounded-xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
+                <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+                    <h2 className="text-xl font-semibold dark:text-white">
                         {contact ? 'Sửa Contact' : 'Thêm Contact mới'}
                     </h2>
                 </div>

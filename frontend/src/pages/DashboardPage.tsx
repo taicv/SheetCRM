@@ -63,7 +63,7 @@ export function DashboardPage() {
             <div className="flex items-center justify-center h-64">
                 <div className="text-center">
                     <div className="animate-spin text-4xl mb-4">🔄</div>
-                    <p className="text-gray-500">Đang tải dữ liệu...</p>
+                    <p className="text-gray-500 dark:text-gray-400">Đang tải dữ liệu...</p>
                 </div>
             </div>
         );
@@ -71,8 +71,8 @@ export function DashboardPage() {
 
     if (error) {
         return (
-            <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
-                <p className="text-red-600 mb-4">❌ {error}</p>
+            <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center dark:bg-red-900/20 dark:border-red-800">
+                <p className="text-red-600 mb-4 dark:text-red-400">❌ {error}</p>
                 <button
                     onClick={loadDashboardData}
                     className="btn btn-primary"
@@ -85,7 +85,7 @@ export function DashboardPage() {
 
     return (
         <div className="space-y-6">
-            <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
 
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -113,23 +113,23 @@ export function DashboardPage() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Recent Contacts */}
                 <div className="card p-6">
-                    <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                    <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2 dark:text-white">
                         <span>👤</span> Contacts mới
                     </h2>
                     {recentContacts.length === 0 ? (
-                        <p className="text-gray-500 text-center py-4">Chưa có contact nào</p>
+                        <p className="text-gray-500 dark:text-gray-400 text-center py-4">Chưa có contact nào</p>
                     ) : (
                         <ul className="space-y-3">
                             {recentContacts.map((contact) => (
-                                <li key={contact.id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                                    <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center">
-                                        <span className="text-primary-600 font-medium">
+                                <li key={contact.id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg dark:bg-gray-700/50">
+                                    <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center dark:bg-primary-900/50">
+                                        <span className="text-primary-600 font-medium dark:text-primary-400">
                                             {contact.name.charAt(0).toUpperCase()}
                                         </span>
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <p className="font-medium text-gray-900 truncate">{contact.name}</p>
-                                        <p className="text-sm text-gray-500 truncate">{contact.email || contact.phone || 'Không có thông tin'}</p>
+                                        <p className="font-medium text-gray-900 truncate dark:text-gray-100">{contact.name}</p>
+                                        <p className="text-sm text-gray-500 truncate dark:text-gray-400">{contact.email || contact.phone || 'Không có thông tin'}</p>
                                     </div>
                                 </li>
                             ))}
@@ -139,21 +139,21 @@ export function DashboardPage() {
 
                 {/* Upcoming Reminders */}
                 <div className="card p-6">
-                    <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                    <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2 dark:text-white">
                         <span>⏰</span> Reminders sắp tới
                     </h2>
                     {upcomingReminders.length === 0 ? (
-                        <p className="text-gray-500 text-center py-4">Không có reminders</p>
+                        <p className="text-gray-500 dark:text-gray-400 text-center py-4">Không có reminders</p>
                     ) : (
                         <ul className="space-y-3">
                             {upcomingReminders.map((reminder) => (
-                                <li key={reminder.id} className="flex items-center gap-3 p-3 bg-amber-50 rounded-lg">
-                                    <div className="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center">
+                                <li key={reminder.id} className="flex items-center gap-3 p-3 bg-amber-50 rounded-lg dark:bg-amber-900/20">
+                                    <div className="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center dark:bg-amber-900/40">
                                         <span className="text-lg">📅</span>
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <p className="font-medium text-gray-900 truncate">{reminder.title}</p>
-                                        <p className="text-sm text-amber-600">
+                                        <p className="font-medium text-gray-900 truncate dark:text-gray-100">{reminder.title}</p>
+                                        <p className="text-sm text-amber-600 dark:text-amber-400">
                                             {new Date(reminder.due_date).toLocaleDateString('vi-VN')}
                                         </p>
                                     </div>
@@ -179,9 +179,9 @@ function StatCard({
     color: 'blue' | 'emerald' | 'amber'
 }) {
     const colorClasses = {
-        blue: 'bg-blue-50 text-blue-600',
-        emerald: 'bg-emerald-50 text-emerald-600',
-        amber: 'bg-amber-50 text-amber-600',
+        blue:    'bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400',
+        emerald: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400',
+        amber:   'bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400',
     };
 
     return (
@@ -191,8 +191,8 @@ function StatCard({
                     <span className="text-2xl">{icon}</span>
                 </div>
                 <div>
-                    <p className="text-3xl font-bold text-gray-900">{value}</p>
-                    <p className="text-sm text-gray-500">{label}</p>
+                    <p className="text-3xl font-bold text-gray-900 dark:text-white">{value}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{label}</p>
                 </div>
             </div>
         </div>

@@ -13,14 +13,14 @@ export function Sidebar() {
     const { user } = useAuth();
 
     return (
-        <aside className="w-64 bg-white border-r border-gray-200 min-h-screen flex flex-col">
+        <aside className="w-64 bg-white border-r border-gray-200 min-h-screen flex flex-col dark:bg-gray-800 dark:border-gray-700">
             {/* Logo */}
-            <div className="p-6 border-b border-gray-200">
+            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
                 <h1 className="text-xl font-bold text-primary-600 flex items-center gap-2">
                     <span className="text-2xl">🏢</span>
                     SheetCRM
                 </h1>
-                <p className="text-xs text-gray-500 mt-1">Google Sheets Edition</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Google Sheets Edition</p>
             </div>
 
             {/* Navigation */}
@@ -32,8 +32,8 @@ export function Sidebar() {
                                 to={item.to}
                                 className={({ isActive }) =>
                                     `flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${isActive
-                                        ? 'bg-primary-50 text-primary-700 font-medium'
-                                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                                        ? 'bg-primary-50 text-primary-700 font-medium dark:bg-primary-900/30 dark:text-primary-400'
+                                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-100'
                                     }`
                                 }
                             >
@@ -47,12 +47,12 @@ export function Sidebar() {
 
             {/* Footer */}
             {user?.spreadsheetId && (
-                <div className="p-4 border-t border-gray-200">
+                <div className="p-4 border-t border-gray-200 dark:border-gray-700">
                     <a
                         href={`https://docs.google.com/spreadsheets/d/${user.spreadsheetId}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-2 px-4 py-2 text-sm text-gray-600 hover:text-primary-600 transition-colors"
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-gray-600 hover:text-primary-600 transition-colors dark:text-gray-400 dark:hover:text-primary-400"
                     >
                         <span>📄</span>
                         <span>Open Google Sheet</span>

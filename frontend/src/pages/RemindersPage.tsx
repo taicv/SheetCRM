@@ -105,8 +105,8 @@ export function RemindersPage() {
 
     if (error) {
         return (
-            <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
-                <p className="text-red-600">❌ {error}</p>
+            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-6 text-center">
+                <p className="text-red-600 dark:text-red-400">❌ {error}</p>
                 <button onClick={loadData} className="btn btn-primary mt-4">Thử lại</button>
             </div>
         );
@@ -115,7 +115,7 @@ export function RemindersPage() {
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
-                <h1 className="text-2xl font-bold text-gray-900">Reminders</h1>
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Reminders</h1>
                 <button
                     onClick={() => setShowModal(true)}
                     className="btn btn-primary"
@@ -132,7 +132,7 @@ export function RemindersPage() {
                         onClick={() => setFilter(f)}
                         className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${filter === f
                                 ? 'bg-primary-500 text-white'
-                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                                : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600'
                             }`}
                     >
                         {f === 'upcoming' ? 'Sắp tới' : f === 'done' ? 'Hoàn thành' : 'Tất cả'}
@@ -143,14 +143,14 @@ export function RemindersPage() {
             {/* List */}
             <div className="space-y-3">
                 {filteredReminders.length === 0 ? (
-                    <p className="text-gray-500 text-center py-8">
+                    <p className="text-gray-500 dark:text-gray-400 text-center py-8">
                         {filter === 'done' ? 'Chưa có reminder hoàn thành' : 'Không có reminder'}
                     </p>
                 ) : (
                     filteredReminders.map((reminder) => (
                         <div
                             key={reminder.id}
-                            className={`card p-4 flex items-center gap-4 ${isOverdue(reminder.due_date) ? 'border-red-200 bg-red-50' : ''
+                            className={`card p-4 flex items-center gap-4 ${isOverdue(reminder.due_date) ? 'border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20' : ''
                                 }`}
                         >
                             <button
@@ -169,16 +169,16 @@ export function RemindersPage() {
                             </button>
 
                             <div className="flex-1 min-w-0">
-                                <p className={`font-medium ${reminder.is_done ? 'text-gray-400 line-through' : 'text-gray-900'}`}>
+                                <p className={`font-medium ${reminder.is_done ? 'text-gray-400 line-through' : 'text-gray-900 dark:text-gray-100'}`}>
                                     {reminder.title}
                                 </p>
-                                <p className="text-sm text-gray-500">
+                                <p className="text-sm text-gray-500 dark:text-gray-400">
                                     👤 {getContactName(reminder.contact_id)}
                                 </p>
                             </div>
 
                             <div className="text-right shrink-0">
-                                <p className={`text-sm font-medium ${isOverdue(reminder.due_date) ? 'text-red-600' : 'text-gray-600'
+                                <p className={`text-sm font-medium ${isOverdue(reminder.due_date) ? 'text-red-600 dark:text-red-400' : 'text-gray-600 dark:text-gray-400'
                                     }`}>
                                     {new Date(reminder.due_date).toLocaleDateString('vi-VN')}
                                 </p>
@@ -237,8 +237,8 @@ function ReminderModal({
 
     return (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-xl w-full max-w-lg mx-4">
-                <div className="p-6 border-b border-gray-200">
+            <div className="bg-white dark:bg-gray-800 rounded-xl w-full max-w-lg mx-4">
+                <div className="p-6 border-b border-gray-200 dark:border-gray-700">
                     <h2 className="text-xl font-semibold">Thêm Reminder mới</h2>
                 </div>
                 <form onSubmit={handleSubmit} className="p-6 space-y-4">
