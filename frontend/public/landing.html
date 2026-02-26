@@ -1,0 +1,890 @@
+<!doctype html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Primary SEO -->
+  <title>SheetCRM - Quản lý khách hàng miễn phí với Google Sheets</title>
+  <meta name="description"
+    content="SheetCRM - CRM nhẹ, miễn phí cho doanh nghiệp nhỏ Việt Nam. Dùng Google Sheets làm database, không cần setup phức tạp. Bắt đầu ngay trong 2 phút." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://sheetcrm.taicv.workers.dev" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://sheetcrm.taicv.workers.dev" />
+  <meta property="og:title" content="SheetCRM - Quản lý khách hàng miễn phí với Google Sheets" />
+  <meta property="og:description"
+    content="CRM nhẹ dùng Google Sheets làm database. Miễn phí, không cần server, phù hợp doanh nghiệp nhỏ Việt Nam." />
+  <meta property="og:image" content="https://sheetcrm.taicv.workers.dev/og-image.png" />
+  <meta property="og:locale" content="vi_VN" />
+  <meta property="og:site_name" content="SheetCRM" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="SheetCRM - Quản lý khách hàng miễn phí" />
+  <meta name="twitter:description" content="CRM nhẹ dùng Google Sheets làm database. Miễn phí, không cần server." />
+  <meta name="twitter:image" content="https://sheetcrm.taicv.workers.dev/og-image.png" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Open+Sans:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#3B82F6',
+            secondary: '#60A5FA',
+            accent: '#F97316',
+            background: '#F8FAFC',
+            text: '#1E293B'
+          },
+          fontFamily: {
+            heading: ['Poppins', 'sans-serif'],
+            body: ['Open Sans', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Open Sans', sans-serif;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      font-family: 'Poppins', sans-serif;
+    }
+
+    /* Smooth scroll */
+    html {
+      scroll-behavior: smooth;
+    }
+
+    /* Respect reduced motion preference */
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    /* Focus visible for keyboard navigation */
+    *:focus-visible {
+      outline: 2px solid #3B82F6;
+      outline-offset: 2px;
+    }
+
+    /* Hide scrollbar for demo video */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+
+<body class="bg-background text-text antialiased">
+
+  <!-- Floating Navigation -->
+  <nav
+    class="fixed top-4 left-4 right-4 z-50 bg-white/90 backdrop-blur-sm border border-gray-200 rounded-2xl shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <!-- Logo -->
+        <div class="flex items-center">
+          <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          <span class="ml-2 text-xl font-heading font-bold text-gray-900">SheetCRM</span>
+        </div>
+
+        <!-- Desktop Menu -->
+        <div class="hidden md:flex items-center space-x-8">
+          <a href="#features"
+            class="text-gray-600 hover:text-primary transition-colors duration-200 cursor-pointer">Tính năng</a>
+          <a href="#demo"
+            class="text-gray-600 hover:text-primary transition-colors duration-200 cursor-pointer">Demo</a>
+          <a href="#testimonials"
+            class="text-gray-600 hover:text-primary transition-colors duration-200 cursor-pointer">Đánh giá</a>
+          <a href="#pricing" class="text-gray-600 hover:text-primary transition-colors duration-200 cursor-pointer">Giá
+            cả</a>
+          <a href="/app"
+            class="px-6 py-2 bg-accent text-white font-medium rounded-lg hover:bg-orange-600 transition-colors duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2">
+            Bắt đầu ngay
+          </a>
+        </div>
+
+        <!-- Mobile Menu Button -->
+        <button id="mobile-menu-button"
+          class="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200 cursor-pointer"
+          aria-label="Mở menu" aria-expanded="false">
+          <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Mobile Menu -->
+      <div id="mobile-menu" class="hidden md:hidden pb-4 border-t border-gray-200 mt-2 pt-4">
+        <div class="flex flex-col space-y-3">
+          <a href="#features"
+            class="text-gray-600 hover:text-primary transition-colors duration-200 cursor-pointer px-2 py-1">Tính
+            năng</a>
+          <a href="#demo"
+            class="text-gray-600 hover:text-primary transition-colors duration-200 cursor-pointer px-2 py-1">Demo</a>
+          <a href="#testimonials"
+            class="text-gray-600 hover:text-primary transition-colors duration-200 cursor-pointer px-2 py-1">Đánh
+            giá</a>
+          <a href="#pricing"
+            class="text-gray-600 hover:text-primary transition-colors duration-200 cursor-pointer px-2 py-1">Giá cả</a>
+          <a href="/app"
+            class="px-6 py-2 bg-accent text-white font-medium rounded-lg hover:bg-orange-600 transition-colors duration-200 cursor-pointer text-center">
+            Bắt đầu ngay
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="pt-32 pb-16 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center">
+        <!-- Badge -->
+        <div class="inline-flex items-center px-4 py-2 bg-blue-50 border border-blue-200 rounded-full mb-6">
+          <svg class="w-4 h-4 text-primary mr-2" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+            <path fill-rule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+              clip-rule="evenodd" />
+          </svg>
+          <span class="text-sm font-medium text-primary">Miễn phí 100% · Không cần thẻ tín dụng</span>
+        </div>
+
+        <!-- Headline -->
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-heading font-bold text-gray-900 mb-6 leading-tight">
+          Quản lý khách hàng <br class="hidden sm:block" />
+          <span class="text-primary">đơn giản với Google Sheets</span>
+        </h1>
+
+        <!-- Subheadline -->
+        <p class="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto mb-8 leading-relaxed">
+          SheetCRM giúp doanh nghiệp nhỏ và freelancer Việt Nam quản lý khách hàng, công ty, ghi chú và nhắc nhở - tất
+          cả trong Google Sheets. Không cần server, không lo về bảo mật.
+        </p>
+
+        <!-- CTA Buttons -->
+        <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
+          <a href="/app"
+            class="w-full sm:w-auto px-8 py-4 bg-accent text-white font-semibold rounded-lg hover:bg-orange-600 transition-colors duration-200 cursor-pointer shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2">
+            Bắt đầu miễn phí
+            <svg class="inline-block w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+              aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+            </svg>
+          </a>
+          <a href="#demo"
+            class="w-full sm:w-auto px-8 py-4 bg-white text-gray-700 font-semibold border-2 border-gray-300 rounded-lg hover:border-primary hover:text-primary transition-colors duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
+            Xem demo
+            <svg class="inline-block w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+              aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </a>
+        </div>
+
+        <!-- Trust Indicators -->
+        <div class="flex flex-wrap justify-center items-center gap-6 text-sm text-gray-500">
+          <div class="flex items-center">
+            <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+              <path fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                clip-rule="evenodd" />
+            </svg>
+            <span>Thiết lập trong 2 phút</span>
+          </div>
+          <div class="flex items-center">
+            <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+              <path fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                clip-rule="evenodd" />
+            </svg>
+            <span>Không cần cài đặt</span>
+          </div>
+          <div class="flex items-center">
+            <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+              <path fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                clip-rule="evenodd" />
+            </svg>
+            <span>Dữ liệu trong Drive của bạn</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Product Demo Section -->
+  <section id="demo" class="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-white to-blue-50">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl sm:text-4xl font-heading font-bold text-gray-900 mb-4">
+          Giao diện đơn giản, dễ sử dụng
+        </h2>
+        <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+          Thiết kế thân thiện, tối ưu cho người Việt. Làm việc trực tiếp trên web hoặc chỉnh sửa ngay trong Google
+          Sheets.
+        </p>
+      </div>
+
+      <!-- Product Screenshot/Demo -->
+      <div class="relative">
+        <!-- Browser Chrome -->
+        <div class="bg-gray-800 rounded-t-xl p-3 flex items-center space-x-2">
+          <div class="flex space-x-2">
+            <div class="w-3 h-3 rounded-full bg-red-500" aria-hidden="true"></div>
+            <div class="w-3 h-3 rounded-full bg-yellow-500" aria-hidden="true"></div>
+            <div class="w-3 h-3 rounded-full bg-green-500" aria-hidden="true"></div>
+          </div>
+          <div class="flex-1 mx-4 bg-gray-700 rounded px-3 py-1 text-xs text-gray-300">
+            sheetcrm.taicv.workers.dev
+          </div>
+        </div>
+
+        <!-- Demo Image Placeholder -->
+        <div class="bg-white border-x border-b border-gray-200 rounded-b-xl overflow-hidden shadow-2xl">
+          <div class="aspect-video bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+            <div class="text-center p-8">
+              <svg class="w-24 h-24 mx-auto text-primary mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+              <p class="text-gray-600 text-lg mb-4">Dashboard với thống kê trực quan</p>
+              <p class="text-sm text-gray-500">[Thay thế bằng ảnh chụp màn hình thực tế]</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Floating Feature Cards -->
+        <div
+          class="hidden lg:block absolute -left-8 top-1/4 bg-white rounded-lg shadow-xl p-4 border border-gray-200 max-w-xs">
+          <div class="flex items-start">
+            <svg class="w-6 h-6 text-green-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"
+              aria-hidden="true">
+              <path fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                clip-rule="evenodd" />
+            </svg>
+            <div>
+              <h4 class="font-semibold text-gray-900 mb-1">Đồng bộ tự động</h4>
+              <p class="text-sm text-gray-600">Thay đổi trên web hoặc Sheets đều được cập nhật ngay</p>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="hidden lg:block absolute -right-8 top-1/2 bg-white rounded-lg shadow-xl p-4 border border-gray-200 max-w-xs">
+          <div class="flex items-start">
+            <svg class="w-6 h-6 text-blue-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"
+              aria-hidden="true">
+              <path fill-rule="evenodd"
+                d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                clip-rule="evenodd" />
+            </svg>
+            <div>
+              <h4 class="font-semibold text-gray-900 mb-1">An toàn tuyệt đối</h4>
+              <p class="text-sm text-gray-600">Dữ liệu lưu trong Google Drive của bạn, không qua server bên thứ 3</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section id="features" class="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl sm:text-4xl font-heading font-bold text-gray-900 mb-4">
+          Tất cả tính năng bạn cần
+        </h2>
+        <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+          Từ quản lý liên hệ đến theo dõi hoạt động - SheetCRM có đủ công cụ cho doanh nghiệp nhỏ
+        </p>
+      </div>
+
+      <!-- Features Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+        <!-- Feature 1 -->
+        <div
+          class="bg-gradient-to-br from-blue-50 to-white p-6 rounded-xl border border-blue-100 hover:shadow-lg transition-shadow duration-200 cursor-pointer">
+          <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+            <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+          </div>
+          <h3 class="text-xl font-heading font-semibold text-gray-900 mb-2">Quản lý Liên hệ</h3>
+          <p class="text-gray-600 leading-relaxed">
+            Lưu trữ thông tin khách hàng đầy đủ: tên, email, điện thoại, công ty. Tìm kiếm nhanh chóng.
+          </p>
+        </div>
+
+        <!-- Feature 2 -->
+        <div
+          class="bg-gradient-to-br from-purple-50 to-white p-6 rounded-xl border border-purple-100 hover:shadow-lg transition-shadow duration-200 cursor-pointer">
+          <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
+            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+              aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+            </svg>
+          </div>
+          <h3 class="text-xl font-heading font-semibold text-gray-900 mb-2">Quản lý Công ty</h3>
+          <p class="text-gray-600 leading-relaxed">
+            Theo dõi thông tin doanh nghiệp: địa chỉ, website, ngành nghề. Liên kết với khách hàng.
+          </p>
+        </div>
+
+        <!-- Feature 3 -->
+        <div
+          class="bg-gradient-to-br from-green-50 to-white p-6 rounded-xl border border-green-100 hover:shadow-lg transition-shadow duration-200 cursor-pointer">
+          <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
+            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+              aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+          </div>
+          <h3 class="text-xl font-heading font-semibold text-gray-900 mb-2">Ghi chú & Hoạt động</h3>
+          <p class="text-gray-600 leading-relaxed">
+            Timeline hoạt động theo thời gian. Ghi chú cuộc gọi, email, meeting với từng khách hàng.
+          </p>
+        </div>
+
+        <!-- Feature 4 -->
+        <div
+          class="bg-gradient-to-br from-orange-50 to-white p-6 rounded-xl border border-orange-100 hover:shadow-lg transition-shadow duration-200 cursor-pointer">
+          <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mb-4">
+            <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+              aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+            </svg>
+          </div>
+          <h3 class="text-xl font-heading font-semibold text-gray-900 mb-2">Nhắc nhở</h3>
+          <p class="text-gray-600 leading-relaxed">
+            Đặt nhắc nhở cho các công việc quan trọng. Hiển thị ngay trên Dashboard.
+          </p>
+        </div>
+
+        <!-- Feature 5 -->
+        <div
+          class="bg-gradient-to-br from-indigo-50 to-white p-6 rounded-xl border border-indigo-100 hover:shadow-lg transition-shadow duration-200 cursor-pointer">
+          <div class="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mb-4">
+            <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+              aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+          </div>
+          <h3 class="text-xl font-heading font-semibold text-gray-900 mb-2">Dashboard Thống kê</h3>
+          <p class="text-gray-600 leading-relaxed">
+            Xem tổng quan doanh số, số lượng khách hàng, hoạt động gần đây qua biểu đồ trực quan.
+          </p>
+        </div>
+
+        <!-- Feature 6 -->
+        <div
+          class="bg-gradient-to-br from-pink-50 to-white p-6 rounded-xl border border-pink-100 hover:shadow-lg transition-shadow duration-200 cursor-pointer">
+          <div class="w-12 h-12 bg-pink-100 rounded-lg flex items-center justify-center mb-4">
+            <svg class="w-6 h-6 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+            </svg>
+          </div>
+          <h3 class="text-xl font-heading font-semibold text-gray-900 mb-2">Dark Mode</h3>
+          <p class="text-gray-600 leading-relaxed">
+            Chế độ tối bảo vệ mắt khi làm việc ban đêm. Tự động theo cài đặt hệ thống.
+          </p>
+        </div>
+
+      </div>
+
+      <!-- Bonus Feature Highlight -->
+      <div class="mt-12 bg-gradient-to-r from-primary to-blue-600 rounded-2xl p-8 text-white">
+        <div class="flex flex-col md:flex-row items-center justify-between">
+          <div class="mb-4 md:mb-0">
+            <h3 class="text-2xl font-heading font-bold mb-2">Tích hợp Google Sheets</h3>
+            <p class="text-blue-100 leading-relaxed">
+              Làm việc trực tiếp trên web app hoặc mở Google Sheets để chỉnh sửa. Tất cả đều đồng bộ tự động!
+            </p>
+          </div>
+          <a href="#demo"
+            class="px-6 py-3 bg-white text-primary font-semibold rounded-lg hover:bg-gray-100 transition-colors duration-200 cursor-pointer whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-blue-600">
+            Xem cách hoạt động
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Social Proof / Testimonials Section -->
+  <section id="testimonials" class="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl sm:text-4xl font-heading font-bold text-gray-900 mb-4">
+          Được tin dùng bởi doanh nghiệp nhỏ
+        </h2>
+        <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+          Hàng trăm freelancer và doanh nghiệp nhỏ Việt Nam đang dùng SheetCRM mỗi ngày
+        </p>
+      </div>
+
+      <!-- Stats -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16">
+        <div class="text-center">
+          <div class="text-4xl font-heading font-bold text-primary mb-2">500+</div>
+          <div class="text-gray-600">Người dùng</div>
+        </div>
+        <div class="text-center">
+          <div class="text-4xl font-heading font-bold text-primary mb-2">10k+</div>
+          <div class="text-gray-600">Liên hệ được quản lý</div>
+        </div>
+        <div class="text-center">
+          <div class="text-4xl font-heading font-bold text-primary mb-2">99.9%</div>
+          <div class="text-gray-600">Uptime</div>
+        </div>
+        <div class="text-center">
+          <div class="text-4xl font-heading font-bold text-primary mb-2">2 phút</div>
+          <div class="text-gray-600">Thời gian setup</div>
+        </div>
+      </div>
+
+      <!-- Testimonials Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+        <!-- Testimonial 1 -->
+        <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+          <div class="flex items-center mb-4">
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+              <path
+                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+            </svg>
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+              <path
+                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+            </svg>
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+              <path
+                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+            </svg>
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+              <path
+                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+            </svg>
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+              <path
+                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+            </svg>
+          </div>
+          <p class="text-gray-700 mb-4 leading-relaxed">
+            "Đơn giản nhất từ trước đến nay! Setup chưa đến 5 phút là xong. Phù hợp hoàn hảo cho freelancer như mình."
+          </p>
+          <div class="flex items-center">
+            <div
+              class="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-white font-semibold"
+              aria-hidden="true">
+              TN
+            </div>
+            <div class="ml-3">
+              <div class="font-semibold text-gray-900">Trần Ngọc</div>
+              <div class="text-sm text-gray-500">Freelance Designer</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Testimonial 2 -->
+        <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+          <div class="flex items-center mb-4">
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+              <path
+                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+            </svg>
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+              <path
+                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+            </svg>
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+              <path
+                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+            </svg>
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+              <path
+                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+            </svg>
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+              <path
+                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+            </svg>
+          </div>
+          <p class="text-gray-700 mb-4 leading-relaxed">
+            "Yên tâm vì data nằm trong Google Drive của mình. Không phải lo về bảo mật hay mất dữ liệu."
+          </p>
+          <div class="flex items-center">
+            <div
+              class="w-10 h-10 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold"
+              aria-hidden="true">
+              LH
+            </div>
+            <div class="ml-3">
+              <div class="font-semibold text-gray-900">Lê Hoàng</div>
+              <div class="text-sm text-gray-500">Chủ Agency nhỏ</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Testimonial 3 -->
+        <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+          <div class="flex items-center mb-4">
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+              <path
+                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+            </svg>
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+              <path
+                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+            </svg>
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+              <path
+                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+            </svg>
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+              <path
+                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+            </svg>
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+              <path
+                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+            </svg>
+          </div>
+          <p class="text-gray-700 mb-4 leading-relaxed">
+            "Thích nhất là có thể edit trực tiếp trong Sheets. Linh hoạt tuyệt vời cho team nhỏ của mình."
+          </p>
+          <div class="flex items-center">
+            <div
+              class="w-10 h-10 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center text-white font-semibold"
+              aria-hidden="true">
+              PT
+            </div>
+            <div class="ml-3">
+              <div class="font-semibold text-gray-900">Phạm Thảo</div>
+              <div class="text-sm text-gray-500">Startup Founder</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing Section -->
+  <section id="pricing" class="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl sm:text-4xl font-heading font-bold text-gray-900 mb-4">
+          Giá cả minh bạch
+        </h2>
+        <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+          Miễn phí mãi mãi. Không có gói Pro, không có giới hạn ẩn.
+        </p>
+      </div>
+
+      <!-- Pricing Card -->
+      <div class="max-w-lg mx-auto">
+        <div
+          class="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-primary rounded-2xl p-8 shadow-xl relative">
+          <!-- Badge -->
+          <div class="absolute -top-4 left-1/2 transform -translate-x-1/2">
+            <span class="bg-accent text-white px-4 py-1 rounded-full text-sm font-semibold">
+              Khuyên dùng
+            </span>
+          </div>
+
+          <div class="text-center mb-6">
+            <h3 class="text-2xl font-heading font-bold text-gray-900 mb-2">Miễn phí mãi mãi</h3>
+            <div class="flex items-baseline justify-center">
+              <span class="text-5xl font-heading font-bold text-primary">0đ</span>
+              <span class="text-gray-500 ml-2">/tháng</span>
+            </div>
+          </div>
+
+          <ul class="space-y-4 mb-8">
+            <li class="flex items-start">
+              <svg class="w-6 h-6 text-green-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"
+                aria-hidden="true">
+                <path fill-rule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clip-rule="evenodd" />
+              </svg>
+              <span class="text-gray-700">Không giới hạn liên hệ & công ty</span>
+            </li>
+            <li class="flex items-start">
+              <svg class="w-6 h-6 text-green-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"
+                aria-hidden="true">
+                <path fill-rule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clip-rule="evenodd" />
+              </svg>
+              <span class="text-gray-700">Không giới hạn ghi chú & nhắc nhở</span>
+            </li>
+            <li class="flex items-start">
+              <svg class="w-6 h-6 text-green-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"
+                aria-hidden="true">
+                <path fill-rule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clip-rule="evenodd" />
+              </svg>
+              <span class="text-gray-700">Tích hợp Google Sheets đầy đủ</span>
+            </li>
+            <li class="flex items-start">
+              <svg class="w-6 h-6 text-green-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"
+                aria-hidden="true">
+                <path fill-rule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clip-rule="evenodd" />
+              </svg>
+              <span class="text-gray-700">Dashboard & thống kê</span>
+            </li>
+            <li class="flex items-start">
+              <svg class="w-6 h-6 text-green-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"
+                aria-hidden="true">
+                <path fill-rule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clip-rule="evenodd" />
+              </svg>
+              <span class="text-gray-700">Dark mode</span>
+            </li>
+            <li class="flex items-start">
+              <svg class="w-6 h-6 text-green-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"
+                aria-hidden="true">
+                <path fill-rule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clip-rule="evenodd" />
+              </svg>
+              <span class="text-gray-700">Dữ liệu an toàn trong Google Drive của bạn</span>
+            </li>
+          </ul>
+
+          <a href="/app"
+            class="block w-full px-8 py-4 bg-accent text-white font-semibold rounded-lg hover:bg-orange-600 transition-colors duration-200 cursor-pointer text-center shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2">
+            Bắt đầu ngay - Miễn phí
+          </a>
+
+          <p class="text-center text-sm text-gray-500 mt-4">
+            Không cần thẻ tín dụng · Setup trong 2 phút
+          </p>
+        </div>
+      </div>
+
+      <!-- FAQ Hint -->
+      <div class="mt-16 text-center">
+        <p class="text-gray-600 mb-4">Còn thắc mắc?</p>
+        <div class="space-y-3 max-w-2xl mx-auto text-left">
+          <details class="bg-gray-50 rounded-lg p-4 cursor-pointer">
+            <summary class="font-semibold text-gray-900">Có thực sự miễn phí 100% không?</summary>
+            <p class="text-gray-600 mt-2 leading-relaxed">
+              Có! SheetCRM hoàn toàn miễn phí. Dữ liệu lưu trong Google Drive của bạn nên không tốn chi phí hosting.
+            </p>
+          </details>
+          <details class="bg-gray-50 rounded-lg p-4 cursor-pointer">
+            <summary class="font-semibold text-gray-900">Dữ liệu có an toàn không?</summary>
+            <p class="text-gray-600 mt-2 leading-relaxed">
+              Dữ liệu được lưu trữ hoàn toàn trong Google Drive của bạn. SheetCRM không lưu trữ dữ liệu trên server
+              riêng.
+            </p>
+          </details>
+          <details class="bg-gray-50 rounded-lg p-4 cursor-pointer">
+            <summary class="font-semibold text-gray-900">Có giới hạn số lượng liên hệ không?</summary>
+            <p class="text-gray-600 mt-2 leading-relaxed">
+              Không! Bạn có thể tạo không giới hạn liên hệ, công ty, ghi chú và nhắc nhở.
+            </p>
+          </details>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA Section -->
+  <section class="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-primary to-blue-600">
+    <div class="max-w-4xl mx-auto text-center">
+      <h2 class="text-3xl sm:text-4xl lg:text-5xl font-heading font-bold text-white mb-6">
+        Sẵn sàng bắt đầu?
+      </h2>
+      <p class="text-xl text-blue-100 mb-8 leading-relaxed">
+        Tham gia cùng hàng trăm doanh nghiệp nhỏ Việt Nam đang quản lý khách hàng hiệu quả với SheetCRM
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+        <a href="/app"
+          class="w-full sm:w-auto px-10 py-5 bg-accent text-white font-bold text-lg rounded-lg hover:bg-orange-600 transition-colors duration-200 cursor-pointer shadow-2xl hover:shadow-3xl focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-blue-600">
+          Bắt đầu miễn phí ngay
+          <svg class="inline-block w-6 h-6 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+            aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+          </svg>
+        </a>
+        <a href="#demo"
+          class="w-full sm:w-auto px-10 py-5 bg-white text-primary font-bold text-lg rounded-lg hover:bg-gray-100 transition-colors duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-blue-600">
+          Xem demo trước
+        </a>
+      </div>
+      <p class="text-blue-100 mt-6">
+        ⚡ Setup trong 2 phút · 🎯 Không cần thẻ tín dụng · 🔒 Dữ liệu an toàn 100%
+      </p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-gray-400 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+        <!-- Brand -->
+        <div class="col-span-1 md:col-span-2">
+          <div class="flex items-center mb-4">
+            <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <span class="ml-2 text-xl font-heading font-bold text-white">SheetCRM</span>
+          </div>
+          <p class="text-gray-400 leading-relaxed mb-4">
+            CRM nhẹ, miễn phí dùng Google Sheets làm database. Dành cho doanh nghiệp nhỏ và freelancer Việt Nam.
+          </p>
+          <div class="flex space-x-4">
+            <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200 cursor-pointer"
+              aria-label="GitHub">
+              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path fill-rule="evenodd"
+                  d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+                  clip-rule="evenodd" />
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Product -->
+        <div>
+          <h4 class="font-semibold text-white mb-4">Sản phẩm</h4>
+          <ul class="space-y-2">
+            <li><a href="#features" class="hover:text-white transition-colors duration-200 cursor-pointer">Tính năng</a>
+            </li>
+            <li><a href="#demo" class="hover:text-white transition-colors duration-200 cursor-pointer">Demo</a></li>
+            <li><a href="#pricing" class="hover:text-white transition-colors duration-200 cursor-pointer">Giá cả</a>
+            </li>
+            <li><a href="/app" class="hover:text-white transition-colors duration-200 cursor-pointer">Đăng nhập</a></li>
+          </ul>
+        </div>
+
+        <!-- Resources -->
+        <div>
+          <h4 class="font-semibold text-white mb-4">Tài nguyên</h4>
+          <ul class="space-y-2">
+            <li><a href="https://github.com/your-repo"
+                class="hover:text-white transition-colors duration-200 cursor-pointer">GitHub</a></li>
+            <li><a href="https://github.com/your-repo/issues"
+                class="hover:text-white transition-colors duration-200 cursor-pointer">Báo lỗi</a></li>
+            <li><a href="#" class="hover:text-white transition-colors duration-200 cursor-pointer">Hướng dẫn</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Bottom -->
+      <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
+        <p class="text-sm text-gray-500">
+          © 2024 SheetCRM. Được làm với ❤️ cho doanh nghiệp Việt Nam.
+        </p>
+        <div class="flex space-x-6 mt-4 md:mt-0">
+          <a href="#" class="text-sm text-gray-500 hover:text-white transition-colors duration-200 cursor-pointer">Chính
+            sách bảo mật</a>
+          <a href="#" class="text-sm text-gray-500 hover:text-white transition-colors duration-200 cursor-pointer">Điều
+            khoản sử dụng</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Mobile Menu Script -->
+  <script>
+    // Mobile menu toggle
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    mobileMenuButton.addEventListener('click', () => {
+      const isExpanded = mobileMenuButton.getAttribute('aria-expanded') === 'true';
+      mobileMenuButton.setAttribute('aria-expanded', !isExpanded);
+      mobileMenu.classList.toggle('hidden');
+    });
+
+    // Close mobile menu when clicking on a link
+    const mobileMenuLinks = mobileMenu.querySelectorAll('a');
+    mobileMenuLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        mobileMenu.classList.add('hidden');
+        mobileMenuButton.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          // Account for fixed navbar height
+          const navHeight = 80;
+          const targetPosition = target.getBoundingClientOffset().top + window.pageYOffset - navHeight;
+
+          window.scrollTo({
+            top: targetPosition,
+            behavior: 'smooth'
+          });
+        }
+      });
+    });
+  </script>
+
+</body>
+
+</html>

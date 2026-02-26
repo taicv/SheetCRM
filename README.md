@@ -1,6 +1,8 @@
 # SheetCRM - Google Sheets CRM
 
-A lightweight CRM using Google Sheets as database, built for small businesses and freelancers.
+**CRM ngay trên Google Sheets** | **CRM right on Google Sheets**
+
+A lightweight, free, open-source CRM using Google Sheets as database—built for small businesses, freelancers, and sales teams in Vietnam and beyond.
 
 ## 📁 Project Structure
 
