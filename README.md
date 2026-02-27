@@ -2,7 +2,7 @@
 
 Một ứng dụng CRM hiện đại, gọn nhẹ sử dụng **Google Sheets làm cơ sở dữ liệu**. Được xây dựng cho doanh nghiệp nhỏ và freelancer muốn có giao diện CRM chuyên nghiệp mà không cần sự phức tạp hay chi phí cao.
 
-> **🌐 Demo trực tuyến:** [sheetcrm.taicv.workers.dev](https://sheetcrm.taicv.workers.dev/)
+> **🌐 Demo:** [sheetcrm.taicv.workers.dev](https://sheetcrm.taicv.workers.dev/)
 
 ---
 

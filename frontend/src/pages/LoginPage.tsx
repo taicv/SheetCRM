@@ -69,8 +69,18 @@ export function LoginPage() {
                     </div>
                 </div>
 
-                <a href="/landing.html" className="login-landing-link">
+                <a
+                    href="/landing.html"
+                    rel="noopener noreferrer"
+                    className="login-demo-sheet-link"
+                >
                     Tìm hiểu thêm về SheetCRM →
+
+                </a>
+
+                <a href="https://docs.google.com/spreadsheets/d/1mLZzeNWC6DnO-aeNo6IDcJ79ysFSXNX9DMX4Oh5uins/edit?usp=sharing"
+                    target="_blank" className="login-landing-link">
+                    📋 Xem demo dữ liệu mẫu →
                 </a>
             </div>
         </div>

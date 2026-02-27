@@ -6,9 +6,10 @@ import { useTheme } from '@/context/ThemeContext';
 interface HeaderProps {
     onRefresh?: () => void;
     isRefreshing?: boolean;
+    onMenuToggle?: () => void;
 }
 
-export function Header({ onRefresh, isRefreshing }: HeaderProps) {
+export function Header({ onRefresh, isRefreshing, onMenuToggle }: HeaderProps) {
     const [searchQuery, setSearchQuery] = useState('');
     const { user, logout } = useAuth();
     const { isDark, toggle: toggleTheme } = useTheme();
@@ -28,20 +29,33 @@ export function Header({ onRefresh, isRefreshing }: HeaderProps) {
     }, []);
 
     return (
-        <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6 dark:bg-gray-800 dark:border-gray-700">
-            {/* Search */}
-            <div className="flex-1 max-w-xl">
-                <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-                        🔍
-                    </span>
-                    <input
-                        type="text"
-                        placeholder="Tìm kiếm liên hệ, công ty..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:placeholder-gray-400"
-                    />
+        <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 md:px-6 dark:bg-gray-800 dark:border-gray-700">
+            <div className="flex items-center gap-3 flex-1">
+                {/* Hamburger menu — mobile only */}
+                <button
+                    onClick={onMenuToggle}
+                    className="md:hidden flex items-center justify-center w-10 h-10 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all dark:text-gray-400 dark:hover:text-gray-200 dark:hover:bg-gray-700"
+                    aria-label="Mở menu"
+                >
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+
+                {/* Search */}
+                <div className="flex-1 max-w-xl">
+                    <div className="relative">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                            🔍
+                        </span>
+                        <input
+                            type="text"
+                            placeholder="Tìm kiếm liên hệ, công ty..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:placeholder-gray-400"
+                        />
+                    </div>
                 </div>
             </div>
 

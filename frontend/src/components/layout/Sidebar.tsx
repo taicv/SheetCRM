@@ -10,10 +10,15 @@ const navItems = [
     { to: '/profile', label: 'Hồ sơ', icon: '👤' },
 ];
 
-export function Sidebar() {
+interface SidebarProps {
+    isOpen?: boolean;
+    onClose?: () => void;
+}
+
+export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
     const { user } = useAuth();
 
-    return (
+    const sidebarContent = (
         <aside className="w-64 bg-white border-r border-gray-200 min-h-screen flex flex-col dark:bg-gray-800 dark:border-gray-700">
             {/* Logo */}
             <div className="p-6 border-b border-gray-200 dark:border-gray-700">
@@ -31,6 +36,7 @@ export function Sidebar() {
                         <li key={item.to}>
                             <NavLink
                                 to={item.to}
+                                onClick={onClose}
                                 className={({ isActive }) =>
                                     `flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${isActive
                                         ? 'bg-primary-50 text-primary-700 font-medium dark:bg-primary-900/30 dark:text-primary-400'
@@ -61,5 +67,29 @@ export function Sidebar() {
                 </div>
             )}
         </aside>
+    );
+
+    return (
+        <>
+            {/* Desktop sidebar — always visible */}
+            <div className="hidden md:block">
+                {sidebarContent}
+            </div>
+
+            {/* Mobile overlay sidebar */}
+            {isOpen && (
+                <div className="fixed inset-0 z-40 md:hidden">
+                    {/* Backdrop */}
+                    <div
+                        className="fixed inset-0 bg-black/50 transition-opacity"
+                        onClick={onClose}
+                    />
+                    {/* Sidebar panel */}
+                    <div className="relative z-50 animate-slide-in-left">
+                        {sidebarContent}
+                    </div>
+                </div>
+            )}
+        </>
     );
 }

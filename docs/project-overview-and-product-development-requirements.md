@@ -157,7 +157,7 @@ Launch SheetCRM as a free, Vietnamese-first CRM solution and establish product-m
 - Dark Mode: Gray-800/700 — User comfort
 
 **Typography**:
-- Headings: Poppins (Google Fonts) — Modern, friendly
+- Headings: Montserrat (Google Fonts) — Modern, friendly
 - Body: Open Sans (Google Fonts) — Readable, universal
 - Monospace: JetBrains Mono (code examples)
 

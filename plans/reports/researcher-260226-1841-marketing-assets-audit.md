@@ -25,7 +25,7 @@ SheetCRM has foundational marketing infrastructure with a Vietnamese-localized l
 **Login Page Gradient**: `#667eea → #764ba2` (Custom purple blend)
 
 ### Typography
-- **Heading Font**: Poppins (wght: 400, 500, 600, 700)
+- **Heading Font**: Montserrat (wght: 400, 500, 600, 700)
 - **Body Font**: Open Sans (wght: 300, 400, 500, 600, 700)
 - **Fallback**: Inter (system-ui, sans-serif)
 

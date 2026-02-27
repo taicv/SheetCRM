@@ -78,7 +78,7 @@
 | Accent Color | #F97316 (Orange) |
 | Background | #F8FAFC (Light Gray) |
 | Dark Mode | Gray-800/700 palette |
-| Primary Font | Poppins (headings) |
+| Primary Font | Montserrat (headings) |
 | Body Font | Open Sans (body text) |
 
 ### Marketing Strategy

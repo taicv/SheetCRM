@@ -37,7 +37,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Open+Sans:wght@300;400;500;600;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@400;500;600;700&family=Open+Sans:ital,wght@300;400;500;600;700&display=swap"
     rel="stylesheet">
 
   <!-- Tailwind CSS -->
@@ -54,7 +54,7 @@
             text: '#1E293B'
           },
           fontFamily: {
-            heading: ['Poppins', 'sans-serif'],
+            heading: ['Montserrat', 'sans-serif'],
             body: ['Open Sans', 'sans-serif']
           }
         }
@@ -73,7 +73,7 @@
     h4,
     h5,
     h6 {
-      font-family: 'Poppins', sans-serif;
+      font-family: 'Montserrat', sans-serif;
     }
 
     /* Smooth scroll */
@@ -500,12 +500,21 @@
         </div>
       </div>
 
-      <div class="text-center mt-12">
+      <div class="text-center mt-12 flex flex-col sm:flex-row gap-4 justify-center items-center">
         <a href="/app"
           class="inline-flex items-center px-8 py-4 bg-accent text-white font-semibold rounded-lg hover:bg-orange-600 transition-colors duration-200 cursor-pointer shadow-lg hover:shadow-xl">
           Thử ngay — Mất 2 phút
           <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+          </svg>
+        </a>
+        <a href="https://docs.google.com/spreadsheets/d/1mLZzeNWC6DnO-aeNo6IDcJ79ysFSXNX9DMX4Oh5uins/edit?usp=sharing"
+          target="_blank" rel="noopener noreferrer"
+          class="inline-flex items-center px-8 py-4 bg-white text-green-700 font-semibold border-2 border-green-300 rounded-lg hover:bg-green-50 hover:border-green-400 transition-colors duration-200 cursor-pointer">
+          📋 Xem demo dữ liệu mẫu
+          <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
           </svg>
         </a>
       </div>

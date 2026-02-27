@@ -207,7 +207,7 @@ select:focus {
 .login-landing-link {
   display: block;
   text-align: center;
-  margin-top: 1.5rem;
+  margin-top: 0.75rem;
   color: #667eea;
   font-size: 0.875rem;
   font-weight: 500;
@@ -218,6 +218,27 @@ select:focus {
 .login-landing-link:hover {
   color: #764ba2;
   text-decoration: underline;
+}
+
+.login-demo-sheet-link {
+  display: block;
+  text-align: center;
+  margin-top: 1.5rem;
+  padding: 0.625rem 1rem;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 0.5rem;
+  color: #16a34a;
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.login-demo-sheet-link:hover {
+  background: #dcfce7;
+  border-color: #86efac;
+  color: #15803d;
 }
 
 /* Loading Screen */
