@@ -82,6 +82,11 @@ export function LoginPage() {
                     target="_blank" className="login-landing-link">
                     📋 Xem demo dữ liệu mẫu →
                 </a>
+
+                <a href="/privacy.html"
+                    target="_blank" className="login-landing-link">
+                    <small> Điều khoản sử dụng và Chính sách bảo mật → </small>
+                </a>
             </div>
         </div>
     );

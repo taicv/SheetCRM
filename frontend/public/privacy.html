@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- SEO -->
+    <title>Chính sách Bảo mật | SheetCRM</title>
+    <meta name="description"
+        content="Chính sách bảo mật của SheetCRM — ứng dụng CRM miễn phí sử dụng Google Sheets. Tìm hiểu cách chúng tôi bảo vệ dữ liệu của bạn." />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://sheetcrm.taicv.workers.dev/privacy.html" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#60A5FA',
+                        accent: '#F97316',
+                        background: '#F8FAFC',
+                        text: '#1E293B'
+                    },
+                    fontFamily: {
+                        heading: ['Montserrat', 'sans-serif'],
+                        body: ['Open Sans', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Open Sans', sans-serif;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+
+<body class="bg-background text-text antialiased">
+
+    <!-- Navigation -->
+    <nav class="bg-white border-b border-gray-200 shadow-sm">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="/landing.html" class="flex items-center">
+                    <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <span class="ml-2 text-xl font-heading font-bold text-gray-900">SheetCRM</span>
+                </a>
+                <a href="/landing.html"
+                    class="text-gray-600 hover:text-primary transition-colors duration-200 text-sm font-medium">
+                    ← Về trang chủ
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Privacy Policy Content -->
+    <main class="py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-4xl mx-auto">
+
+            <!-- Header -->
+            <div class="mb-12">
+                <h1 class="text-3xl sm:text-4xl font-heading font-bold text-gray-900 mb-4">
+                    Chính sách Bảo mật
+                </h1>
+                <p class="text-gray-500 text-sm">
+                    Cập nhật lần cuối: 27 tháng 2, 2026
+                </p>
+            </div>
+
+            <!-- Content -->
+            <div class="prose prose-lg max-w-none space-y-8">
+
+                <!-- 1. Introduction -->
+                <section>
+                    <h2 class="text-2xl font-heading font-semibold text-gray-900 mb-4">1. Giới thiệu</h2>
+                    <p class="text-gray-700 leading-relaxed">
+                        SheetCRM (<a href="https://sheetcrm.taicv.workers.dev"
+                            class="text-primary hover:underline">https://sheetcrm.taicv.workers.dev</a>) là một ứng dụng
+                        quản lý quan hệ khách hàng (CRM) miễn phí, mã nguồn mở, sử dụng Google Sheets làm cơ sở dữ liệu.
+                        Chính sách bảo mật này giải thích cách chúng tôi thu thập, sử dụng và bảo vệ thông tin của bạn
+                        khi bạn sử dụng dịch vụ.
+                    </p>
+                </section>
+
+                <!-- 2. Data Collection -->
+                <section>
+                    <h2 class="text-2xl font-heading font-semibold text-gray-900 mb-4">2. Dữ liệu chúng tôi thu thập
+                    </h2>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        Khi bạn đăng nhập vào SheetCRM bằng tài khoản Google, chúng tôi truy cập các thông tin sau thông
+                        qua Google OAuth 2.0:
+                    </p>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700">
+                        <li><strong>Thông tin hồ sơ Google:</strong> Tên, địa chỉ email, và ảnh đại diện (nếu có) — dùng
+                            để hiển thị trên giao diện ứng dụng.</li>
+                        <li><strong>Quyền truy cập Google Sheets:</strong> Chúng tôi yêu cầu quyền đọc/ghi Google Sheets
+                            để tạo và quản lý file CRM trong Google Drive của bạn.</li>
+                        <li><strong>Quyền truy cập Google Drive:</strong> Giới hạn ở việc tạo file Google Sheets mới
+                            trong Drive của bạn. Chúng tôi không truy cập các file khác.</li>
+                    </ul>
+                </section>
+
+                <!-- 3. How we use data -->
+                <section>
+                    <h2 class="text-2xl font-heading font-semibold text-gray-900 mb-4">3. Cách chúng tôi sử dụng dữ liệu
+                    </h2>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        Dữ liệu của bạn được sử dụng cho các mục đích sau:
+                    </p>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700">
+                        <li><strong>Xác thực danh tính:</strong> Đăng nhập an toàn qua Google OAuth 2.0.</li>
+                        <li><strong>Quản lý CRM:</strong> Tạo, đọc, cập nhật và xóa dữ liệu khách hàng trong Google
+                            Sheets của bạn.</li>
+                        <li><strong>Hiển thị giao diện:</strong> Hiển thị tên và ảnh đại diện của bạn trên ứng dụng.
+                        </li>
+                    </ul>
+                </section>
+
+                <!-- 4. Data Storage -->
+                <section>
+                    <h2 class="text-2xl font-heading font-semibold text-gray-900 mb-4">4. Lưu trữ dữ liệu</h2>
+                    <div class="bg-blue-50 border border-blue-200 rounded-xl p-6 mb-4">
+                        <div class="flex items-start">
+                            <svg class="w-6 h-6 text-primary mr-3 flex-shrink-0 mt-0.5" fill="currentColor"
+                                viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            <p class="text-gray-700 leading-relaxed">
+                                <strong>Dữ liệu CRM của bạn (liên hệ, công ty, ghi chú, nhắc nhở) được lưu trữ hoàn toàn
+                                    trong Google Drive của bạn</strong> dưới dạng file Google Sheets. SheetCRM không lưu
+                                trữ bản sao dữ liệu CRM trên bất kỳ server nào.
+                            </p>
+                        </div>
+                    </div>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700">
+                        <li><strong>Phiên đăng nhập (Session):</strong> Được lưu dưới dạng cookie mã hóa AES-GCM
+                            (HttpOnly, Secure) trên trình duyệt của bạn. Không có dữ liệu phiên đăng nhập nào được lưu
+                            trên server.</li>
+                        <li><strong>Token truy cập Google:</strong> Được lưu tạm thời trong cookie phiên đăng nhập đã mã
+                            hóa và được sử dụng để giao tiếp với Google Sheets API. Token tự động hết hạn và được làm
+                            mới khi cần.</li>
+                    </ul>
+                </section>
+
+                <!-- 5. Data Sharing -->
+                <section>
+                    <h2 class="text-2xl font-heading font-semibold text-gray-900 mb-4">5. Chia sẻ dữ liệu</h2>
+                    <p class="text-gray-700 leading-relaxed">
+                        <strong>Chúng tôi không bán, trao đổi hay chia sẻ dữ liệu cá nhân của bạn với bất kỳ bên thứ ba
+                            nào.</strong>
+                        Dữ liệu của bạn chỉ được truyền giữa trình duyệt của bạn, server SheetCRM (Cloudflare Workers)
+                        và Google Sheets API. Không có dữ liệu nào được gửi đến bên thứ ba khác.
+                    </p>
+                </section>
+
+                <!-- 6. Data Security -->
+                <section>
+                    <h2 class="text-2xl font-heading font-semibold text-gray-900 mb-4">6. Bảo mật dữ liệu</h2>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        Chúng tôi áp dụng các biện pháp bảo mật sau:
+                    </p>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700">
+                        <li>Xác thực OAuth 2.0 tiêu chuẩn của Google — không lưu trữ mật khẩu.</li>
+                        <li>Mã hóa AES-GCM cho cookie phiên đăng nhập.</li>
+                        <li>Cookie HttpOnly và Secure để chống tấn công XSS và MITM.</li>
+                        <li>Giao thức HTTPS cho toàn bộ giao tiếp.</li>
+                        <li>Không lưu trữ dữ liệu người dùng trên server (kiến trúc stateless).</li>
+                    </ul>
+                </section>
+
+                <!-- 7. Google API -->
+                <section>
+                    <h2 class="text-2xl font-heading font-semibold text-gray-900 mb-4">7. Sử dụng Google API</h2>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        SheetCRM sử dụng Google API Services và tuân thủ
+                        <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank"
+                            rel="noopener noreferrer" class="text-primary hover:underline">Google API Services User Data
+                            Policy</a>,
+                        bao gồm các yêu cầu về Giới hạn Sử dụng (Limited Use).
+                    </p>
+                    <p class="text-gray-700 leading-relaxed">
+                        Cụ thể, SheetCRM chỉ sử dụng dữ liệu từ Google API để cung cấp chức năng CRM cho người dùng.
+                        Chúng tôi không sử dụng dữ liệu Google API cho quảng cáo, không chuyển dữ liệu cho bên thứ ba
+                        (trừ khi cần thiết để cung cấp dịch vụ), và không sử dụng dữ liệu để phát triển mô hình AI/ML.
+                    </p>
+                </section>
+
+                <!-- 8. User Rights -->
+                <section>
+                    <h2 class="text-2xl font-heading font-semibold text-gray-900 mb-4">8. Quyền của bạn</h2>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        Bạn có toàn quyền kiểm soát dữ liệu của mình:
+                    </p>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700">
+                        <li><strong>Truy cập dữ liệu:</strong> Bạn có thể truy cập trực tiếp dữ liệu CRM qua Google
+                            Sheets trong Google Drive bất cứ lúc nào.</li>
+                        <li><strong>Xuất dữ liệu:</strong> Dữ liệu đã ở trong Google Sheets — bạn có thể tải về dưới
+                            nhiều định dạng (CSV, Excel, PDF).</li>
+                        <li><strong>Xóa dữ liệu:</strong> Xóa file Google Sheets "SheetCRM Data" trong Google Drive để
+                            xóa toàn bộ dữ liệu CRM.</li>
+                        <li><strong>Thu hồi quyền truy cập:</strong> Vào <a
+                                href="https://myaccount.google.com/permissions" target="_blank"
+                                rel="noopener noreferrer" class="text-primary hover:underline">cài đặt bảo mật
+                                Google</a> để thu hồi quyền truy cập của SheetCRM bất cứ lúc nào.</li>
+                    </ul>
+                </section>
+
+                <!-- 9. Cookies -->
+                <section>
+                    <h2 class="text-2xl font-heading font-semibold text-gray-900 mb-4">9. Cookie</h2>
+                    <p class="text-gray-700 leading-relaxed">
+                        SheetCRM chỉ sử dụng cookie thiết yếu (essential cookies) cho mục đích duy trì phiên đăng nhập.
+                        Chúng tôi không sử dụng cookie theo dõi (tracking cookies), cookie quảng cáo, hay bất kỳ công cụ
+                        phân tích bên thứ ba nào (như Google Analytics).
+                    </p>
+                </section>
+
+                <!-- 10. Children -->
+                <section>
+                    <h2 class="text-2xl font-heading font-semibold text-gray-900 mb-4">10. Trẻ em</h2>
+                    <p class="text-gray-700 leading-relaxed">
+                        SheetCRM không dành cho người dưới 13 tuổi. Chúng tôi không cố ý thu thập thông tin cá nhân từ
+                        trẻ em dưới 13 tuổi.
+                    </p>
+                </section>
+
+                <!-- 11. Changes -->
+                <section>
+                    <h2 class="text-2xl font-heading font-semibold text-gray-900 mb-4">11. Thay đổi chính sách</h2>
+                    <p class="text-gray-700 leading-relaxed">
+                        Chúng tôi có thể cập nhật chính sách bảo mật này theo thời gian. Mọi thay đổi sẽ được đăng tải
+                        trên trang này với ngày cập nhật mới. Việc tiếp tục sử dụng SheetCRM sau khi có thay đổi đồng
+                        nghĩa với việc bạn chấp nhận chính sách mới.
+                    </p>
+                </section>
+
+                <!-- 12. Open Source -->
+                <section>
+                    <h2 class="text-2xl font-heading font-semibold text-gray-900 mb-4">12. Mã nguồn mở</h2>
+                    <p class="text-gray-700 leading-relaxed">
+                        SheetCRM là phần mềm mã nguồn mở. Bạn có thể xem toàn bộ mã nguồn tại
+                        <a href="https://github.com/taicv/SheetCRM" target="_blank" rel="noopener noreferrer"
+                            class="text-primary hover:underline">GitHub</a>
+                        để xác minh cách dữ liệu được xử lý.
+                    </p>
+                </section>
+
+                <!-- 13. Contact -->
+                <section>
+                    <h2 class="text-2xl font-heading font-semibold text-gray-900 mb-4">13. Liên hệ</h2>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        Nếu bạn có câu hỏi về chính sách bảo mật này, vui lòng liên hệ:
+                    </p>
+                    <ul class="list-none space-y-2 text-gray-700">
+                        <li>📧 Email: <a href="mailto:contact@taicv.com"
+                                class="text-primary hover:underline">contact@taicv.com</a></li>
+                        <li>🐛 GitHub Issues: <a href="https://github.com/taicv/SheetCRM/issues" target="_blank"
+                                rel="noopener noreferrer"
+                                class="text-primary hover:underline">github.com/taicv/SheetCRM/issues</a></li>
+                    </ul>
+                </section>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-400 py-8 px-4 sm:px-6 lg:px-8 mt-12">
+        <div class="max-w-4xl mx-auto text-center">
+            <p class="text-sm text-gray-500">
+                © 2026 SheetCRM. Mã nguồn mở — Được làm với ❤️ cho doanh nghiệp Việt Nam.
+            </p>
+            <div class="flex justify-center space-x-6 mt-4">
+                <a href="/landing.html"
+                    class="text-sm text-gray-500 hover:text-white transition-colors duration-200">Trang chủ</a>
+                <a href="/privacy.html"
+                    class="text-sm text-gray-500 hover:text-white transition-colors duration-200">Chính sách bảo mật</a>
+                <a href="https://github.com/taicv/SheetCRM" target="_blank" rel="noopener noreferrer"
+                    class="text-sm text-gray-500 hover:text-white transition-colors duration-200">GitHub</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+
+</html>
