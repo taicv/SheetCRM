@@ -3,10 +3,12 @@ import type {
     Company,
     Note,
     Reminder,
+    Deal,
     ContactFormData,
     CompanyFormData,
     NoteFormData,
     ReminderFormData,
+    DealFormData,
     DashboardStats
 } from '@/types';
 
@@ -124,6 +126,30 @@ export const remindersApi = {
         fetchApi<Reminder>(`/reminders/${id}`, {
             method: 'PUT',
             body: JSON.stringify({ is_done: true }),
+        }),
+};
+
+// Deals API
+export const dealsApi = {
+    getAll: () => fetchApi<Deal[]>('/deals'),
+
+    getById: (id: string) => fetchApi<Deal>(`/deals/${id}`),
+
+    create: (data: DealFormData) =>
+        fetchApi<Deal>('/deals', {
+            method: 'POST',
+            body: JSON.stringify(data),
+        }),
+
+    update: (id: string, data: Partial<DealFormData>) =>
+        fetchApi<Deal>(`/deals/${id}`, {
+            method: 'PUT',
+            body: JSON.stringify(data),
+        }),
+
+    delete: (id: string) =>
+        fetchApi<{ success: boolean }>(`/deals/${id}`, {
+            method: 'DELETE',
         }),
 };
 

@@ -1,57 +1,62 @@
 <!doctype html>
 <html lang="vi">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Primary SEO -->
-    <title>SheetCRM - Quản lý khách hàng</title>
-    <meta name="description" content="SheetCRM - CRM nhẹ, miễn phí cho doanh nghiệp nhỏ Việt Nam. Dùng Google Sheets làm database, không cần setup phức tạp." />
-    <meta name="robots" content="index, follow" />
-    <link rel="canonical" href="https://sheetcrm.pages.dev" />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Open Graph -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://sheetcrm.pages.dev" />
-    <meta property="og:title" content="SheetCRM - Quản lý khách hàng" />
-    <meta property="og:description" content="CRM nhẹ dùng Google Sheets làm database. Miễn phí, không cần server, phù hợp doanh nghiệp nhỏ Việt Nam." />
-    <meta property="og:image" content="https://sheetcrm.pages.dev/og-image.png" />
-    <meta property="og:locale" content="vi_VN" />
-    <meta property="og:site_name" content="SheetCRM" />
+  <!-- Primary SEO -->
+  <title>SheetCRM - Quản lý khách hàng</title>
+  <meta name="description"
+    content="SheetCRM - CRM nhẹ, miễn phí cho doanh nghiệp nhỏ Việt Nam. Dùng Google Sheets làm database, không cần setup phức tạp." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://sheetcrm.taicv.workers.dev" />
 
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="SheetCRM - Quản lý khách hàng" />
-    <meta name="twitter:description" content="CRM nhẹ dùng Google Sheets làm database. Miễn phí, không cần server." />
-    <meta name="twitter:image" content="https://sheetcrm.pages.dev/og-image.png" />
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://sheetcrm.taicv.workers.dev" />
+  <meta property="og:title" content="SheetCRM - Quản lý khách hàng" />
+  <meta property="og:description"
+    content="CRM nhẹ dùng Google Sheets làm database. Miễn phí, không cần server, phù hợp doanh nghiệp nhỏ Việt Nam." />
+  <meta property="og:image" content="https://sheetcrm.taicv.workers.dev/og-image.png" />
+  <meta property="og:locale" content="vi_VN" />
+  <meta property="og:site_name" content="SheetCRM" />
 
-    <!-- PWA -->
-    <link rel="manifest" href="/manifest.json" />
-    <meta name="theme-color" content="#3b82f6" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-    <meta name="apple-mobile-web-app-title" content="SheetCRM" />
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="SheetCRM - Quản lý khách hàng" />
+  <meta name="twitter:description" content="CRM nhẹ dùng Google Sheets làm database. Miễn phí, không cần server." />
+  <meta name="twitter:image" content="https://sheetcrm.taicv.workers.dev/og-image.png" />
 
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <!-- PWA -->
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#3b82f6" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="SheetCRM" />
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
-    <!-- Anti-FOUC: apply dark class before React renders -->
-    <script>
-      (function () {
-        var t = localStorage.getItem('theme');
-        if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-          document.documentElement.classList.add('dark');
-        }
-      })();
-    </script>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Anti-FOUC: apply dark class before React renders -->
+  <script>
+    (function () {
+      var t = localStorage.getItem('theme');
+      if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+      }
+    })();
+  </script>
+</head>
+
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+
 </html>

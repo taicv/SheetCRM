@@ -32,7 +32,7 @@ export function ContactsPage() {
             setContacts(contactsData);
             setCompanies(companiesData);
         } catch (err) {
-            setError(err instanceof Error ? err.message : 'Failed to load contacts');
+            setError(err instanceof Error ? err.message : 'Không thể tải danh sách liên hệ');
         } finally {
             setLoading(false);
         }
@@ -54,10 +54,10 @@ export function ContactsPage() {
             setSubmitting(true);
             if (editingContact) {
                 await contactsApi.update(editingContact.id, data);
-                toast.success('Đã cập nhật contact!');
+                toast.success('Đã cập nhật liên hệ!');
             } else {
                 await contactsApi.create(data);
-                toast.success('Đã thêm contact mới!');
+                toast.success('Đã thêm liên hệ mới!');
             }
             setShowModal(false);
             setEditingContact(null);
@@ -70,11 +70,11 @@ export function ContactsPage() {
     }
 
     async function handleDelete(id: string) {
-        if (!confirm('Bạn có chắc muốn xóa contact này?')) return;
+        if (!confirm('Bạn có chắc muốn xóa liên hệ này?')) return;
         try {
             setDeletingId(id);
             await contactsApi.delete(id);
-            toast.success('Đã xóa contact!');
+            toast.success('Đã xóa liên hệ!');
             loadData();
         } catch (err) {
             toast.error(err instanceof Error ? err.message : 'Xóa thất bại');
@@ -103,12 +103,12 @@ export function ContactsPage() {
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Contacts</h1>
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Liên hệ</h1>
                 <button
                     onClick={() => { setEditingContact(null); setShowModal(true); }}
                     className="btn btn-primary"
                 >
-                    + Thêm Contact
+                    + Thêm liên hệ
                 </button>
             </div>
 
@@ -116,7 +116,7 @@ export function ContactsPage() {
             <div className="max-w-md">
                 <input
                     type="text"
-                    placeholder="Tìm theo tên, email, phone..."
+                    placeholder="Tìm theo tên, email, SĐT..."
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     className="input"
@@ -129,17 +129,15 @@ export function ContactsPage() {
                     <thead className="bg-gray-50 dark:bg-gray-700/50 border-b border-gray-200 dark:border-gray-700">
                         <tr>
                             <th className="text-left px-6 py-3 text-sm font-medium text-gray-500 dark:text-gray-400">Tên</th>
-                            <th className="text-left px-6 py-3 text-sm font-medium text-gray-500 dark:text-gray-400">Email</th>
-                            <th className="text-left px-6 py-3 text-sm font-medium text-gray-500 dark:text-gray-400">Phone</th>
-                            <th className="text-left px-6 py-3 text-sm font-medium text-gray-500 dark:text-gray-400">Company</th>
-                            <th className="text-left px-6 py-3 text-sm font-medium text-gray-500 dark:text-gray-400">Actions</th>
+                            <th className="text-left px-6 py-3 text-sm font-medium text-gray-500 dark:text-gray-400">Công ty</th>
+                            <th className="text-right px-6 py-3 text-sm font-medium text-gray-500 dark:text-gray-400">Thao tác</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
                         {filteredContacts.length === 0 ? (
                             <tr>
-                                <td colSpan={5} className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
-                                    {search ? 'Không tìm thấy contact' : 'Chưa có contact nào'}
+                                <td colSpan={3} className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
+                                    {search ? 'Không tìm thấy liên hệ' : 'Chưa có liên hệ nào'}
                                 </td>
                             </tr>
                         ) : (
@@ -155,23 +153,23 @@ export function ContactsPage() {
                                             <span className="font-medium text-gray-900 dark:text-gray-100">{contact.name}</span>
                                         </div>
                                     </td>
-                                    <td className="px-6 py-4 text-gray-600 dark:text-gray-400">{contact.email || '-'}</td>
-                                    <td className="px-6 py-4 text-gray-600 dark:text-gray-400">{contact.phone || '-'}</td>
                                     <td className="px-6 py-4 text-gray-600 dark:text-gray-400">{getCompanyName(contact.company_id)}</td>
-                                    <td className="px-6 py-4">
-                                        <div className="flex gap-2">
+                                    <td className="px-6 py-4 text-right">
+                                        <div className="flex gap-1 justify-end">
                                             <button
                                                 onClick={() => { setEditingContact(contact); setShowModal(true); }}
-                                                className="text-sm text-primary-600 hover:text-primary-700"
+                                                className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                                                title="Sửa"
                                             >
-                                                Sửa
+                                                ✏️
                                             </button>
                                             <button
                                                 onClick={() => handleDelete(contact.id)}
                                                 disabled={deletingId === contact.id}
-                                                className="text-sm text-red-600 hover:text-red-700 disabled:opacity-50"
+                                                className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors disabled:opacity-50"
+                                                title="Xóa"
                                             >
-                                                {deletingId === contact.id ? 'Đang xóa...' : 'Xóa'}
+                                                {deletingId === contact.id ? '⏳' : '🗑️'}
                                             </button>
                                         </div>
                                     </td>
@@ -222,7 +220,7 @@ function ContactModal({
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (!formData.name.trim()) {
-            toast.error('Vui lòng nhập tên');
+            toast.error('Vui lòng nhập tên liên hệ');
             return;
         }
         onSave(formData);
@@ -233,7 +231,7 @@ function ContactModal({
             <div className="bg-white dark:bg-gray-800 rounded-xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
                 <div className="p-6 border-b border-gray-200 dark:border-gray-700">
                     <h2 className="text-xl font-semibold dark:text-white">
-                        {contact ? 'Sửa Contact' : 'Thêm Contact mới'}
+                        {contact ? 'Sửa liên hệ' : 'Thêm liên hệ mới'}
                     </h2>
                 </div>
                 <form onSubmit={handleSubmit} className="p-6 space-y-4">
@@ -268,13 +266,13 @@ function ContactModal({
                         />
                     </div>
                     <div>
-                        <label className="label">Company</label>
+                        <label className="label">Công ty</label>
                         <select
                             value={formData.company_id}
                             onChange={e => setFormData({ ...formData, company_id: e.target.value })}
                             className="input"
                         >
-                            <option value="">-- Chọn company --</option>
+                            <option value="">-- Chọn công ty --</option>
                             {companies.map(c => (
                                 <option key={c.id} value={c.id}>{c.name}</option>
                             ))}

@@ -4,7 +4,7 @@ import { useAuth } from '@/context/AuthContext';
 import { ToastProvider } from '@/context/ToastContext';
 import { ThemeProvider } from '@/context/ThemeContext';
 import { Layout } from '@/components/layout';
-import { DashboardPage, ContactsPage, CompaniesPage, RemindersPage, LoginPage, ProfilePage } from '@/pages';
+import { DashboardPage, ContactsPage, CompaniesPage, RemindersPage, DealsPage, LoginPage, ProfilePage } from '@/pages';
 import { initAnalytics, track, identify } from '@/lib/analytics';
 
 // Initialize analytics once on load
@@ -30,7 +30,7 @@ function AppRoutes() {
         return (
             <div className="loading-screen">
                 <div className="loading-spinner" />
-                <p>Loading...</p>
+                <p>Đang tải...</p>
             </div>
         );
     }
@@ -47,6 +47,7 @@ function AppRoutes() {
                     <Route path="/contacts" element={<ContactsPage />} />
                     <Route path="/companies" element={<CompaniesPage />} />
                     <Route path="/reminders" element={<RemindersPage />} />
+                    <Route path="/deals" element={<DealsPage />} />
                     <Route path="/profile" element={<ProfilePage />} />
                 </Routes>
             </Layout>

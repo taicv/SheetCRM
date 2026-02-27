@@ -12,7 +12,7 @@ interface SheetsConfig {
 
 class GoogleSheetsClient {
     private config: SheetsConfig;
-    private static readonly ALLOWED_SHEETS = new Set(['contacts', 'companies', 'notes', 'reminders']);
+    private static readonly ALLOWED_SHEETS = new Set(['contacts', 'companies', 'notes', 'reminders', 'deals']);
 
     constructor(config: SheetsConfig) {
         this.config = config;

@@ -104,6 +104,7 @@ cd ../backend && pnpm install
 
 ### 3. Configure environment variables
 
+1. Create `backend/.dev.vars` (copy from `.dev.vars.example`):
 Create `backend/.dev.vars` (see `.dev.vars.example`):
 
 ```env
@@ -112,6 +113,12 @@ GOOGLE_CLIENT_SECRET=your-client-secret
 COOKIE_SECRET=any-random-string-at-least-32-characters-long
 ```
 
+2. Edit `backend/wrangler.jsonc` 
+    - change `"account_id": "f37f5b565b1143b73c44b1fa319e1814"` to your account id.
+
+### 4. (Optional) Configure PostHog Analytics
+
+If you want to enable analytics tracking, create `frontend/.env` (copy from `.env.example`):
 _(Optional)_ Create `frontend/.env` for analytics (see `.env.example`):
 
 ```env

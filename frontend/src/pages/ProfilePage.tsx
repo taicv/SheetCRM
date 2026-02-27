@@ -51,7 +51,7 @@ export function ProfilePage() {
                         <h2 className="text-xl font-semibold text-gray-900 dark:text-white">{user?.name}</h2>
                         <p className="text-gray-500 dark:text-gray-400 mt-1">{user?.email}</p>
                         <span className="inline-flex items-center gap-1 mt-2 px-2 py-0.5 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-xs font-medium rounded-full">
-                            ✓ Google Account
+                            ✓ Tài khoản Google
                         </span>
                     </div>
                 </div>
@@ -70,15 +70,15 @@ export function ProfilePage() {
                     <div className="grid grid-cols-3 gap-4">
                         <div className="text-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
                             <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{stats?.totalContacts ?? '—'}</p>
-                            <p className="text-xs text-blue-500 dark:text-blue-400 mt-1">Contacts</p>
+                            <p className="text-xs text-blue-500 dark:text-blue-400 mt-1">Liên hệ</p>
                         </div>
                         <div className="text-center p-4 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl">
                             <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{stats?.totalCompanies ?? '—'}</p>
-                            <p className="text-xs text-emerald-500 dark:text-emerald-400 mt-1">Companies</p>
+                            <p className="text-xs text-emerald-500 dark:text-emerald-400 mt-1">Công ty</p>
                         </div>
                         <div className="text-center p-4 bg-amber-50 dark:bg-amber-900/20 rounded-xl">
                             <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">{stats?.upcomingReminders ?? '—'}</p>
-                            <p className="text-xs text-amber-500 dark:text-amber-400 mt-1">Reminders</p>
+                            <p className="text-xs text-amber-500 dark:text-amber-400 mt-1">Nhắc nhở</p>
                         </div>
                     </div>
                 )}

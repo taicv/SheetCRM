@@ -2,10 +2,10 @@ import { useAuth } from '@/context/AuthContext';
 
 // Whitelist of allowed OAuth error messages to prevent reflected content
 const ERROR_MESSAGES: Record<string, string> = {
-    access_denied: 'Access was denied. Please try again.',
-    server_error: 'A server error occurred during authentication.',
-    temporarily_unavailable: 'The service is temporarily unavailable. Please try later.',
-    invalid_scope: 'Invalid permissions requested. Please contact support.',
+    access_denied: 'Quyền truy cập bị từ chối. Vui lòng thử lại.',
+    server_error: 'Lỗi máy chủ trong quá trình xác thực.',
+    temporarily_unavailable: 'Dịch vụ tạm thời không khả dụng. Vui lòng thử lại sau.',
+    invalid_scope: 'Quyền yêu cầu không hợp lệ. Vui lòng liên hệ hỗ trợ.',
 };
 
 export function LoginPage() {
@@ -13,7 +13,7 @@ export function LoginPage() {
     const searchParams = new URLSearchParams(window.location.search);
     const errorParam = searchParams.get('error');
     const error = errorParam
-        ? ERROR_MESSAGES[errorParam] || 'Authentication failed. Please try again.'
+        ? ERROR_MESSAGES[errorParam] || 'Xác thực thất bại. Vui lòng thử lại.'
         : null;
 
     return (
@@ -30,13 +30,13 @@ export function LoginPage() {
                     </div>
                     <h1>SheetCRM</h1>
                     <p className="login-subtitle">
-                        Manage your contacts with Google Sheets
+                        Quản lý khách hàng với Google Sheets
                     </p>
                 </div>
 
                 {error && (
                     <div className="login-error">
-                        <p>Authentication failed: {error}</p>
+                        <p>Xác thực thất bại: {error}</p>
                     </div>
                 )}
 
@@ -51,23 +51,27 @@ export function LoginPage() {
                         <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z" />
                         <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z" />
                     </svg>
-                    <span>Sign in with Google</span>
+                    <span>Đăng nhập bằng Google</span>
                 </button>
 
                 <div className="login-features">
                     <div className="login-feature">
                         <span className="feature-icon">📊</span>
-                        <span>Uses your Google Sheets as database</span>
+                        <span>Dùng Google Sheets làm cơ sở dữ liệu</span>
                     </div>
                     <div className="login-feature">
                         <span className="feature-icon">🔒</span>
-                        <span>Secure OAuth 2.0 authentication</span>
+                        <span>Xác thực an toàn với OAuth 2.0</span>
                     </div>
                     <div className="login-feature">
                         <span className="feature-icon">✏️</span>
-                        <span>Edit directly in Sheets or in-app</span>
+                        <span>Chỉnh sửa trực tiếp trên Sheets hoặc trong ứng dụng</span>
                     </div>
                 </div>
+
+                <a href="/landing.html" className="login-landing-link">
+                    Tìm hiểu thêm về SheetCRM →
+                </a>
             </div>
         </div>
     );

@@ -22,6 +22,7 @@ interface Env {
     GOOGLE_CLIENT_ID: string;
     GOOGLE_CLIENT_SECRET: string;
     COOKIE_SECRET: string;
+    ASSETS: { fetch: (request: Request) => Promise<Response> };
 }
 
 // CORS headers — same-origin since frontend is served by wrangler
@@ -62,6 +63,7 @@ const ALLOWED_FIELDS: Record<string, string[]> = {
     companies: ['name', 'website', 'industry', 'address', 'notes'],
     reminders: ['title', 'description', 'due_date', 'contact_id', 'is_done'],
     notes: ['content', 'type', 'contact_id', 'created_at'],
+    deals: ['title', 'value', 'stage', 'contact_id', 'company_id', 'expected_close_date', 'notes'],
 };
 
 function sanitizeInput(data: Record<string, unknown>, entityType: string): Record<string, string> {
@@ -106,6 +108,13 @@ function validateReminder(data: Record<string, unknown>): string | null {
 function validateNote(data: Record<string, unknown>): string | null {
     if (!data.content || typeof data.content !== 'string' || data.content.trim().length === 0) {
         return 'Note content is required';
+    }
+    return null;
+}
+
+function validateDeal(data: Record<string, unknown>): string | null {
+    if (!data.title || typeof data.title !== 'string' || data.title.trim().length === 0) {
+        return 'Deal title is required';
     }
     return null;
 }
@@ -525,6 +534,41 @@ router.add('DELETE', '/api/v1/reminders/:id', async (_, params, client) => {
     return jsonResponse({ success: true });
 });
 
+// Deals CRUD
+router.add('GET', '/api/v1/deals', async (_, __, client) => {
+    const rows = await client!.getRows('deals');
+    return jsonResponse(rows);
+});
+
+router.add('GET', '/api/v1/deals/:id', async (_, params, client) => {
+    const row = await client!.getRowById('deals', params.id);
+    if (!row) return errorResponse('Deal not found', 404);
+    return jsonResponse(row);
+});
+
+router.add('POST', '/api/v1/deals', async (request, _, client) => {
+    const raw = await request.json() as Record<string, unknown>;
+    const err = validateDeal(raw);
+    if (err) return errorResponse(err, 400);
+    const data = sanitizeInput(raw, 'deals');
+    const row = await client!.appendRow('deals', data);
+    return jsonResponse(row, 201);
+});
+
+router.add('PUT', '/api/v1/deals/:id', async (request, params, client) => {
+    const raw = await request.json() as Record<string, unknown>;
+    const data = sanitizeInput(raw, 'deals');
+    const row = await client!.updateRow('deals', params.id, data);
+    if (!row) return errorResponse('Deal not found', 404);
+    return jsonResponse(row);
+});
+
+router.add('DELETE', '/api/v1/deals/:id', async (_, params, client) => {
+    const success = await client!.deleteRow('deals', params.id);
+    if (!success) return errorResponse('Deal not found', 404);
+    return jsonResponse({ success: true });
+});
+
 // Health check
 router.add('GET', '/api/v1/health', async () => {
     return jsonResponse({ status: 'ok' });
@@ -558,6 +602,12 @@ export default {
                 if (!requestOrigin || !allowedOrigins.includes(requestOrigin)) {
                     return errorResponse('Forbidden: invalid request origin', 403);
                 }
+            }
+
+            // Only handle /api/ routes in the Worker; let all other paths
+            // fall through to the Wrangler assets handler (SPA fallback).
+            if (!path.startsWith('/api/')) {
+                return env.ASSETS.fetch(request);
             }
 
             const match = router.match(method, path);

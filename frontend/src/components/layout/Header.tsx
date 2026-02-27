@@ -37,7 +37,7 @@ export function Header({ onRefresh, isRefreshing }: HeaderProps) {
                     </span>
                     <input
                         type="text"
-                        placeholder="Search contacts, companies..."
+                        placeholder="Tìm kiếm liên hệ, công ty..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:placeholder-gray-400"
@@ -61,10 +61,10 @@ export function Header({ onRefresh, isRefreshing }: HeaderProps) {
                     onClick={onRefresh}
                     disabled={isRefreshing}
                     className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-gray-50 rounded-lg transition-all disabled:opacity-50 dark:text-gray-400 dark:hover:text-primary-400 dark:hover:bg-gray-700"
-                    title="Sync data from Google Sheets"
+                    title="Đồng bộ dữ liệu từ Google Sheets"
                 >
                     <span className={`${isRefreshing ? 'animate-spin' : ''}`}>🔄</span>
-                    <span className="hidden sm:inline">Sync</span>
+                    <span className="hidden sm:inline">Đồng bộ</span>
                 </button>
 
                 {/* User menu */}
@@ -88,7 +88,7 @@ export function Header({ onRefresh, isRefreshing }: HeaderProps) {
                             </div>
                         )}
                         <span className="text-sm font-medium text-gray-700 hidden sm:inline dark:text-gray-300">
-                            {user?.name || 'User'}
+                            {user?.name || 'Người dùng'}
                         </span>
                     </button>
 

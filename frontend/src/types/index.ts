@@ -39,11 +39,25 @@ export interface Reminder {
     created_at: string;
 }
 
+export interface Deal {
+    id: string;
+    title: string;
+    value?: string;
+    stage?: string;
+    contact_id?: string;
+    company_id?: string;
+    expected_close_date?: string;
+    notes?: string;
+    created_at: string;
+    updated_at: string;
+}
+
 // Form types for create/update operations
 export type ContactFormData = Omit<Contact, 'id' | 'created_at' | 'updated_at'>;
 export type CompanyFormData = Omit<Company, 'id' | 'created_at' | 'updated_at'>;
 export type NoteFormData = Omit<Note, 'id' | 'created_at'>;
 export type ReminderFormData = Omit<Reminder, 'id' | 'created_at'>;
+export type DealFormData = Omit<Deal, 'id' | 'created_at' | 'updated_at'>;
 
 // API response types
 export interface ApiResponse<T> {
@@ -63,6 +77,7 @@ export interface PaginatedResponse<T> {
 export interface DashboardStats {
     totalContacts: number;
     totalCompanies: number;
+    totalDeals: number;
     upcomingReminders: number;
     recentActivities: Activity[];
 }

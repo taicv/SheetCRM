@@ -2,5 +2,6 @@ export { DashboardPage } from './DashboardPage';
 export { ContactsPage } from './ContactsPage';
 export { CompaniesPage } from './CompaniesPage';
 export { RemindersPage } from './RemindersPage';
+export { DealsPage } from './DealsPage';
 export { LoginPage } from './LoginPage';
 export { ProfilePage } from './ProfilePage';

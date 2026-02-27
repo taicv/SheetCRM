@@ -41,7 +41,7 @@ export function CompaniesPage() {
             const data = await companiesApi.getAll();
             setCompanies(data);
         } catch (err) {
-            setError(err instanceof Error ? err.message : 'Failed to load companies');
+            setError(err instanceof Error ? err.message : 'Không thể tải danh sách công ty');
         } finally {
             setLoading(false);
         }
@@ -57,10 +57,10 @@ export function CompaniesPage() {
             setSubmitting(true);
             if (editingCompany) {
                 await companiesApi.update(editingCompany.id, data);
-                toast.success('Đã cập nhật company!');
+                toast.success('Đã cập nhật công ty!');
             } else {
                 await companiesApi.create(data);
-                toast.success('Đã thêm company mới!');
+                toast.success('Đã thêm công ty mới!');
             }
             setShowModal(false);
             setEditingCompany(null);
@@ -73,11 +73,11 @@ export function CompaniesPage() {
     }
 
     async function handleDelete(id: string) {
-        if (!confirm('Bạn có chắc muốn xóa company này?')) return;
+        if (!confirm('Bạn có chắc muốn xóa công ty này?')) return;
         try {
             setDeletingId(id);
             await companiesApi.delete(id);
-            toast.success('Đã xóa company!');
+            toast.success('Đã xóa công ty!');
             loadData();
         } catch (err) {
             toast.error(err instanceof Error ? err.message : 'Xóa thất bại');
@@ -106,12 +106,12 @@ export function CompaniesPage() {
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Companies</h1>
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Công ty</h1>
                 <button
                     onClick={() => { setEditingCompany(null); setShowModal(true); }}
                     className="btn btn-primary"
                 >
-                    + Thêm Company
+                    + Thêm công ty
                 </button>
             </div>
 
@@ -128,7 +128,7 @@ export function CompaniesPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {filteredCompanies.length === 0 ? (
                     <p className="text-gray-500 dark:text-gray-400 col-span-full text-center py-8">
-                        {search ? 'Không tìm thấy company' : 'Chưa có company nào'}
+                        {search ? 'Không tìm thấy công ty' : 'Chưa có công ty nào'}
                     </p>
                 ) : (
                     filteredCompanies.map((company) => (
@@ -210,7 +210,7 @@ function CompanyModal({
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (!formData.name.trim()) {
-            toast.error('Vui lòng nhập tên company');
+            toast.error('Vui lòng nhập tên công ty');
             return;
         }
         onSave(formData);
@@ -221,12 +221,12 @@ function CompanyModal({
             <div className="bg-white dark:bg-gray-800 rounded-xl w-full max-w-lg mx-4">
                 <div className="p-6 border-b border-gray-200 dark:border-gray-700">
                     <h2 className="text-xl font-semibold dark:text-white">
-                        {company ? 'Sửa Company' : 'Thêm Company mới'}
+                        {company ? 'Sửa công ty' : 'Thêm công ty mới'}
                     </h2>
                 </div>
                 <form onSubmit={handleSubmit} className="p-6 space-y-4">
                     <div>
-                        <label className="label">Tên Company *</label>
+                        <label className="label">Tên công ty *</label>
                         <input
                             type="text"
                             value={formData.name}
@@ -242,7 +242,7 @@ function CompanyModal({
                             value={formData.industry}
                             onChange={e => setFormData({ ...formData, industry: e.target.value })}
                             className="input"
-                            placeholder="Retail, Tech, Services..."
+                            placeholder="Bán lẻ, Công nghệ, Dịch vụ..."
                         />
                     </div>
                     <div>
